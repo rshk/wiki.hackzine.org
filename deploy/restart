@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source /opt/virtualenvs/staticsite-build/bin/activate
+make clean html
