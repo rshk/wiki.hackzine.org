@@ -96,7 +96,31 @@ html_theme = 'default'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {
+    'footerbgcolor': '#ddd',
+
+    'sidebarbgcolor': "#333",
+    'sidebartextcolor': "#fff",
+    'sidebarlinkcolor': "#ddd",
+
+    'relbarbgcolor': '#222',
+    'relbartextcolor': '#fff',
+    'relbarlinkcolor': '#eee',
+
+    'bgcolor': '#fff',
+    'textcolor': '#333',
+    'linkcolor': '#04c',
+    'visitedlinkcolor': '#04c',
+
+    'headbgcolor': '#eee',
+    'headtextcolor': '#113',
+    'headlinkcolor': '#04c',
+
+    'codebgcolor': '#111',
+    'codetextcolor': '#fff',
+}
+
+pygments_style = 'monokai'
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
@@ -164,7 +188,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'HackzineWikidoc'
+htmlhelp_basename = 'HackzineWiki'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,7 +207,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'HackzineWiki.tex', u'Hackzine Wiki Documentation',
+  ('index', 'HackzineWiki.tex', u'Hackzine Wiki',
    u'Samuele \\textasciitilde{}redShadow\\textasciitilde{} Santi', 'manual'),
 ]
 
@@ -213,7 +237,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'hackzinewiki', u'Hackzine Wiki Documentation',
+    ('index', 'hackzinewiki', u'Hackzine Wiki',
      [u'Samuele ~redShadow~ Santi'], 1)
 ]
 
@@ -227,7 +251,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'HackzineWiki', u'Hackzine Wiki Documentation',
+  ('index', 'HackzineWiki', u'Hackzine Wiki',
    u'Samuele ~redShadow~ Santi', 'HackzineWiki', 'One line description of project.',
    'Miscellaneous'),
 ]
