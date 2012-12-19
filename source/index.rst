@@ -9,8 +9,12 @@ Welcome to Hackzine Wiki's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
+    development/index
+    sysadmin/index
+    hardware/index
+    scripts/index
 
 
 Indices and tables
@@ -19,4 +23,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
