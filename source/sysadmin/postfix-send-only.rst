@@ -9,6 +9,7 @@ I cut-and-paste the configuration here. Maybe it is not so cool, but it works.
 In ``/etc/postfix/main.cf``:
 
 .. code-block:: cfg
+    :linenos:
 
     ## See /usr/share/postfix/main.cf.dist for a commented, more complete version
 

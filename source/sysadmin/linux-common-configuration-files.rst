@@ -31,6 +31,7 @@ Useful aliases
 **TODO:** Move this thing to git.
 
 .. code-block:: bash
+    :linenos:
 
     ############################################################
     ## Bash aliases
