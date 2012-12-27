@@ -18,7 +18,7 @@ public key available for the following key IDs" warning message.
     KEYID="$1"
 
     echo "Registering APT key $1..."
-    gpg --keyserver wwwkeys.eu.pgp.net --recv-keys "$KEYID"
+    gpg --keyserver pgp.mit.edu --recv-keys "$KEYID"
     gpg --export --armor "$KEYID" | apt-key add -
 
 Alternative: debian-archive-keyring
