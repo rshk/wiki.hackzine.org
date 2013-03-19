@@ -1,5 +1,5 @@
 Arduino: Disable auto-reset
-####
+###########################
 
 To disable the automatic reset of the Arduino board upon serial connection,
 just stick a **120 Ohm resistor** between the ``RESET`` and ``+5V`` pins.

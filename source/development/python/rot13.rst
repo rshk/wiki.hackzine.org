@@ -1,5 +1,7 @@
 Python: Rot13 text transformation
-####
+#################################
+
+If GPG isn't enough, you can use ROT13 for your encryption needs! ;)
 
 .. code-block:: python
 

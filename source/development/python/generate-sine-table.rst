@@ -1,5 +1,5 @@
 Python: generate sine table
-####
+###########################
 
 For use, e.g., on embedded devices that lack the CPU power to calculate this.
 

@@ -1,5 +1,5 @@
 Debian: prevent installation of recommended packages
-####
+####################################################
 
 To prevent apt from suggesting/installing recommended packages add this to
 ``/etc/apt/apt.conf``::

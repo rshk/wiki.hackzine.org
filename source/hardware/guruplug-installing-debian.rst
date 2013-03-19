@@ -34,14 +34,14 @@ In order to proceed, you will therefore need either a USB stick (or disk),
 an SD card or an external disk with an eSATA port.
 
 Preparation
-====
+===========
 
 Make sure to connect an Ethernet cable to your plug computer (if you haven't
 already) because the installer will download files from the Internet for the
 installation.
 
 Upgrading U-Boot
-====
+================
 
 You have to upgrade the u-boot boot loader before you can install Debian.
 
@@ -52,7 +52,7 @@ version of u-boot before proceeding with the installation of Debian.
 .. _u-boot upgrade process: http://www.cyrius.com/debian/kirkwood/sheevaplug/uboot-upgrade.html
 
 Starting the Installer
-====
+======================
 
 First of all, you have to download the installer. Download the  uImage_ and
 uInitrd_ and store them either on a USB stick, MMC/SD card or a TFTP server.
@@ -106,7 +106,7 @@ Finally, start the installer::
     bootm 0x00800000 0x01100000
 
 The Installation
-====
+================
 
 The installation itself should be pretty standard and you can follow the
 `installation guide <http://www.debian.org/releases/stable/armel>`_.

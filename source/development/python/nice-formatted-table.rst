@@ -1,7 +1,12 @@
 Python: nicely formatted table
-####
+##############################
 
-.. warning:: although it seems to be working fine, this piece of code still lacks some serious unittesting. Beware!
+.. warning::
+    although it seems to be working fine, this piece of code still lacks
+    some serious unittesting. Beware!
+
+.. note::
+    This might be worth becoming a project..
 
 .. code-block:: python
 

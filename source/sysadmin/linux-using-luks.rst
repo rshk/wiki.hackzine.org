@@ -1,5 +1,5 @@
 Linux: Basic LUKS usage
-####
+#######################
 
 **See also:** http://www.hackzine.org/minimal-luks-guide.html
 
@@ -7,7 +7,7 @@ These are just the basic commands I usually use to create encrypted partitions
 using LUKS.
 
 The commands
-====
+============
 
 ::
 
@@ -22,7 +22,7 @@ The commands
 
 
 Commands explained
-====
+==================
 
 This part includes just some output of the commands and some comments,
 not really more. But I promise I will write a full guide one day..

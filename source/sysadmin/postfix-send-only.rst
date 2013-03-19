@@ -1,5 +1,5 @@
 Postfix: send-only configuration
-####
+################################
 
 I just configured postfix on a machine to send-only mode (just send emails,
 do not receive).

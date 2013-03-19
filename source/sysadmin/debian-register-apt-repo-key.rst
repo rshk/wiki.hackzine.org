@@ -1,5 +1,5 @@
 Debian: registering an apt repository key
-####
+#########################################
 
 **See also:** http://www.hackzine.org/register-apt-repository-key.html
 
@@ -22,7 +22,7 @@ public key available for the following key IDs" warning message.
     gpg --export --armor "$KEYID" | apt-key add -
 
 Alternative: debian-archive-keyring
-====
+===================================
 
 From: http://www.debian-administration.org/users/dkg/weblog/11
 
@@ -35,7 +35,7 @@ or, if you have unstable repositories::
     apt-get install debian-archive-keyring/unstable
 
 apt-key update
-====
+==============
 
 Another method, is just to run::
 

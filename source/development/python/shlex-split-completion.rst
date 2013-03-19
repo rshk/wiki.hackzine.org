@@ -1,5 +1,5 @@
 Python: shlex splitting for completion
-####
+######################################
 
 This is a function I used to split commands using shlex even in presence of
 unterminated tokens, raising ``ValueError``s.

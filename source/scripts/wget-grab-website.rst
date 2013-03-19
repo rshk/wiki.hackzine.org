@@ -1,10 +1,10 @@
 Grabbing a whole site using wget
-####
+################################
 
 Recently, I needed an off-line copy of some documentation, available only as
 web pages. That's how I managed to clone entire parts of websites using wget.
 
-First of all, the whole command I used::
+First of all, the whole command I use::
 
     wget -U "Mozilla/5.0 (X11; U; Linux; en-US; rv:1.9.1.16) Gecko/20110929 Firefox/3.5.16" \
         --recursive --level=1 --no-clobber --page-requisites --html-extension \
@@ -13,7 +13,7 @@ First of all, the whole command I used::
         http://www.example.com/docs/interesting-part/ --domains=www.example.com
 
 Basic arguments
-====
+===============
 
 These are the basic arguments needed to perform the recursive download.
 
@@ -43,7 +43,7 @@ These are the basic arguments needed to perform the recursive download.
 
 
 Avoiding imposed download limits
-====
+================================
 
 Many web servers tend to limit the pages a user can download in a given amount
 of time, or the user-agents that can access given pages, etc.

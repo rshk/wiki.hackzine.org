@@ -1,5 +1,5 @@
 Debian: installation from chroot
-####
+################################
 
 **See also:** `Installing Debian GNU/Linux from a Unix/Linux System`_
 
@@ -7,7 +7,7 @@ Debian: installation from chroot
     http://www.debian.org/releases/stable/i386/apds03.html.en
 
 Partitioning
-====
+============
 
 Use ``fdisk`` to create partitions on the device, then create filesystems /
 swap space / ...
@@ -23,7 +23,7 @@ And create the following partitions:
 * ``/dev/sdx3`` -> the /home directory
 
 Create filesystems
-----
+------------------
 
 ::
 
@@ -34,7 +34,7 @@ Create filesystems
 
 
 Activate swap
-----
+-------------
 
 It is recommended to sync before activating swap::
 
@@ -42,7 +42,7 @@ It is recommended to sync before activating swap::
     swapon /dev/sdx2
 
 Mount the root filesystem
-----
+-------------------------
 
 ::
 
@@ -51,10 +51,10 @@ Mount the root filesystem
 
 
 Install the system using debootstrap
-====
+====================================
 
 Installing debootstrap
-----
+----------------------
 
 The utility used by the Debian installer, and recognized as the official way
 to install a Debian base system, is **debootstrap**.
@@ -82,7 +82,7 @@ You will need to have root privileges to install the files.
 
 
 Running debootstrap
-----
+-------------------
 
 debootstrap can download the needed files directly from the archive when you
 run it. You can substitute any Debian archive mirror for http.us.debian.org/debian
@@ -102,3 +102,5 @@ or sparc.
 
 
 **TODO:** Finish this guide
+
+**TODO:** Add information on how to install on UsbKey (how did I do that, btw?)

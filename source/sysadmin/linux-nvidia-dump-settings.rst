@@ -1,5 +1,5 @@
 Linux: dump NVIDIA card settings
-####
+################################
 
 This is an **experimental** script that tries to dump the current monitors
 configuration for nvidia video cards on Linux.

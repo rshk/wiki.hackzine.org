@@ -1,5 +1,5 @@
 Linux: getting e-mail notification on user login
-####
+################################################
 
 Maybe I am a bit paranoid, but I want to know in real-time who logs into and
 from which address to all my publicly-reachable machines.

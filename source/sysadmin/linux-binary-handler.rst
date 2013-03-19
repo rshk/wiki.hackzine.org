@@ -1,5 +1,5 @@
 Linux: Specifying handler for file execution
-####
+############################################
 
 The ``suexec`` binary usually only handles executables or scripts specifying
 their interpreter using a hash-bang line.

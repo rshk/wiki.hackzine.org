@@ -1,5 +1,5 @@
 Color prompts with readline
-#####
+###########################
 
 Readline is known to have issues with color prompts, such as broken cursor
 position calculation, long lines self-overwriting, etc.

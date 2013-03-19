@@ -1,8 +1,8 @@
 Debian: apt preferences
-####
+#######################
 
 Install some packages from testing
-====
+==================================
 
 From: http://stackoverflow.com/questions/512906
 

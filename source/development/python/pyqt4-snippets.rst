@@ -1,10 +1,10 @@
 Python: PyQt4 Snippets
-####
+######################
 
 Have a look at the `PyQt4 classes reference`_.
 
 QTreeView example usage
-====
+=======================
 
 .. code-block:: python
 
@@ -24,7 +24,7 @@ QTreeView example usage
     ui.sideTree.setModel(model)
 
 Lockable main window
-====
+====================
 
 This is a ``QMainWindow`` which close can be locked, and forced to emit a signal instead of just close the window.
 Useful eg. to ask whether to save changes, etc.

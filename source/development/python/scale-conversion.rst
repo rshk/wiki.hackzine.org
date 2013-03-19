@@ -1,5 +1,5 @@
 Python: scale conversion
-####
+########################
 
 Let's suppose we have two  different scales, one ranging from ``A`` to ``B``
 and the other from ``C`` to ``D``.
@@ -20,14 +20,17 @@ Here it is a function to do that.
 Source code: [[attachment:rescale.py]]
 
 Example: Celsius <-> Fahrenheit conversion
-====
+==========================================
 
-An example application of this function, is conversion between Celsius and Fahrenheit degrees.
+An example application of this function, is conversion between Celsius
+and Fahrenheit degrees, assuming we don't know the conversion
+ratio / delta, but just two fixed points in the scale.
 
-Knowing that ``0 °C = 32 °F`` and ``100 °C = 212 °F``, we can do some conversions.
+Knowing, for example, that ``0 °C = 32 °F`` and ``100 °C = 212 °F``, we
+can do some conversions:
 
 °C to °F
-----
+--------
 
 .. code-block:: python
 
@@ -39,7 +42,7 @@ Knowing that ``0 °C = 32 °F`` and ``100 °C = 212 °F``, we can do some conver
     23.0
 
 °F to °C
-----
+--------
 
 .. code-block:: python
 

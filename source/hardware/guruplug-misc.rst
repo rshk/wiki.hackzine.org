@@ -1,11 +1,11 @@
 GuruPlug: misc stuff
-####
+####################
 
 * See the `official GuruPlug wiki page`_
 * **Default password:** ``nosoup4u``
 
 Connecting to serial console
-====
+============================
 
 **See:** http://www.plugcomputer.org/plugwiki/index.php/Serial_terminal_program
 
@@ -15,7 +15,7 @@ Connecting to serial console
 4. Connect using ``screen /dev/ttyUSB0 115200``
 
 Accessing U-Boot console
-----
+------------------------
 
 Do as above, but connect to the serial port **before** powering up the plug.
 Then, as soon as you see serial output, press a key to interrupt normal
@@ -37,7 +37,7 @@ boot and access the U-Boot console::
     Marvell>>
 
 Debian installation
-====
+===================
 
 As of 2012-04-13, I successfully followed these guides in order to get debian
 running on a usbkey
@@ -61,7 +61,7 @@ running on a usbkey
 
 
 Upgrading uBoot
-----
+---------------
 
 Follow the guide here: `Upgrading SheevaPlug's U-Boot`_
 
@@ -69,7 +69,7 @@ Follow the guide here: `Upgrading SheevaPlug's U-Boot`_
 
 
 Installing debian on the usb stick, booting, etc.
-----
+-------------------------------------------------
 
 Just follow the guide here: `Installing Debian on Plug Computers`_
 
@@ -77,7 +77,7 @@ Just follow the guide here: `Installing Debian on Plug Computers`_
 
 
 Copy to flash
-----
+-------------
 
 **Step 1** Flash the kernel from the usb stick on the NAND::
 
@@ -136,7 +136,7 @@ To boot from the NAND again after copying the rootfs to NAND, I used these comma
 
 
 Kernel upgrade
-====
+==============
 
 I recently had an issue during a kernel upgrade (3.2.0-2-kirkwood): dpkg was getting stuck after this::
 

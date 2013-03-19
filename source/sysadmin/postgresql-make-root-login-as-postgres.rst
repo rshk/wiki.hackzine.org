@@ -1,5 +1,5 @@
 PostgreSQL: Make root log in as postgres user
-####
+#############################################
 
 **Tested on PostgreSQL 8.3**
 
