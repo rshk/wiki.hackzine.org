@@ -1,8 +1,15 @@
 Python: logging related stuff
-####
+#############################
+
+
+.. note::
+    All the source code here has been made into a project.
+    You can find the source code here: https://github.com/rshk/cool-logging
+    or directly on pypi (install using ``pip install cool_logging``).
+
 
 Colorful formatter for console messages
-====
+=======================================
 
 .. code-block:: python
 
@@ -65,7 +72,7 @@ Colorful formatter for console messages
 
 
 Formatter that prefixes lines with level name
-====
+=============================================
 
 .. code-block:: python
 
