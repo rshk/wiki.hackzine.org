@@ -1,8 +1,15 @@
 Arduino: arscons
-####
+################
 
-Tired of using that stupid java thing to write / upload your firmwares to arduino?
+Tired of using that stupid java thing to write / upload your firmwares to
+arduino?
 Use arscons_ then (or `my slightly improved fork`_).
+
+.. note::
+    I'm actively contributing to the original project via pull-requests,
+    so better thing would be to use it from the original repo, instead
+    of my fork (just watch for any incoming pull request if you absolutely
+    need something new).
 
 Simply download the SConstruct file and put it in your project directory, alongside the ``.pde`` file.
 Please keep in mind that the directory should have the same name of the pde (without extension, of course).
@@ -15,7 +22,7 @@ Then use the following commands::
 to build & upload your "sketch".
 
 Compiling on Gentoo Linux amd64
-====
+===============================
 
 I had some issues using arscons on 64bit Gentoo. I solved by adding two missing paths to ``CFLAGS``.
 
