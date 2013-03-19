@@ -13,6 +13,7 @@ Welcome to Hackzine Wiki
     sysadmin/index
     hardware/index
     scripts/index
+    contributing
 
 :ref:`search`
 
