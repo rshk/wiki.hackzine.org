@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python: misc one-liners and snippets &mdash; Hackzine Wiki</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Hackzine Wiki" href="../../index.html" />
+    <link rel="up" title="Development" href="../index.html" />
+    <link rel="next" title="Python: nicely formatted table" href="nice-formatted-table.html" />
+    <link rel="prev" title="Python: Mechanize hacks" href="mechanize-hacks.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nice-formatted-table.html" title="Python: nicely formatted table"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="mechanize-hacks.html" title="Python: Mechanize hacks"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Development</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+
+  <div class="section" id="python-misc-one-liners-and-snippets">
+<h1>Python: misc one-liners and snippets<a class="headerlink" href="#python-misc-one-liners-and-snippets" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="formatted-date-to-datetime-object">
+<h2>Formatted date to datetime object<a class="headerlink" href="#formatted-date-to-datetime-object" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">datetime</span>
+<span class="n">timestring</span> <span class="o">=</span> <span class="s">&quot;2005-09-01 12:30:09&quot;</span>
+<span class="n">time_format</span> <span class="o">=</span> <span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s"> %H:%M:%S&quot;</span>
+<span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestring</span><span class="p">,</span> <span class="n">time_format</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="punycode-urls">
+<h2>Punycode URLs<a class="headerlink" href="#punycode-urls" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">domain</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\xd8\xa7\xd9\x84\xd8\xa7\xd8\xb9\xd9\x84\xd9\x8a</span><span class="s">-</span><span class="se">\xd9\x84\xd9</span><span class="s">&#39;</span>\
+    <span class="s">&#39;</span><span class="se">\x84\xd8\xa7\xd8\xaa\xd8\xb5\xd8\xa7\xd9\x84\xd8\xa7\xd8\xaa</span><span class="s">.</span><span class="se">\xd9</span><span class="s">&#39;</span>\
+    <span class="s">&#39;</span><span class="se">\x82\xd8\xb7\xd8\xb1</span><span class="s">&#39;</span>
+<span class="n">domain_unicode</span> <span class="o">=</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="s">&quot;utf8&quot;</span><span class="p">)</span>
+<span class="n">domain_idna</span> <span class="o">=</span> <span class="n">domain_unicode</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;idna&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">domain</span> <span class="o">=</span> <span class="s">u&#39;</span><span class="se">\u0627\u0644\u0627\u0639\u0644\u064a</span><span class="s">-</span><span class="se">\u0644\u0644\u0627\u062a</span><span class="s">&#39;</span>\
+    <span class="s">&#39;</span><span class="se">\u0635\u0627\u0644\u0627\u062a</span><span class="s">.</span><span class="se">\u0642\u0637\u0631</span><span class="s">&#39;</span>
+<span class="n">domain_idna</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;idna&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="save-python-shell-history">
+<h2>Save Python shell history<a class="headerlink" href="#save-python-shell-history" title="Permalink to this headline">¶</a></h2>
+<p>To save all the commands history of the current Python shell, use the
+<a class="reference external" href="http://docs.python.org/library/readline.html">readline</a> module as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">readline</span>
+<span class="n">readline</span><span class="o">.</span><span class="n">write_history_file</span><span class="p">(</span><span class="s">&#39;/tmp/my-history-file&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="lazy-property">
+<h2>Lazy property<a class="headerlink" href="#lazy-property" title="Permalink to this headline">¶</a></h2>
+<p>Like <tt class="docutils literal"><span class="pre">&#64;property</span></tt>, but lazy (the returned value will be cached in the object).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">lazy_property</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+    <span class="n">attr_name</span> <span class="o">=</span> <span class="s">&#39;_lazy_&#39;</span> <span class="o">+</span> <span class="n">fn</span><span class="o">.</span><span class="n">__name__</span>
+
+    <span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">fn</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">deleter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">getter</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">setter</span><span class="p">,</span> <span class="n">fdel</span><span class="o">=</span><span class="n">deleter</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">fn</span><span class="o">.</span><span class="n">__doc__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
+        var disqus_identifier = "development/python/misc-oneliners";
+	var disqus_title = "Hackzine Wiki";
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Python: misc one-liners and snippets</a><ul>
+<li><a class="reference internal" href="#formatted-date-to-datetime-object">Formatted date to datetime object</a></li>
+<li><a class="reference internal" href="#punycode-urls">Punycode URLs</a></li>
+<li><a class="reference internal" href="#save-python-shell-history">Save Python shell history</a></li>
+<li><a class="reference internal" href="#lazy-property">Lazy property</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mechanize-hacks.html"
+                        title="previous chapter">Python: Mechanize hacks</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nice-formatted-table.html"
+                        title="next chapter">Python: nicely formatted table</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/development/python/misc-oneliners.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nice-formatted-table.html" title="Python: nicely formatted table"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="mechanize-hacks.html" title="Python: Mechanize hacks"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="../index.html" >Development</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Samuele ~redShadow~ Santi.
+      Last updated on 2013-03-19 16:59:17 +0100.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

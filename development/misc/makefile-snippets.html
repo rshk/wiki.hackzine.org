@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Makefile snippets &mdash; Hackzine Wiki</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Hackzine Wiki" href="../../index.html" />
+    <link rel="up" title="Development" href="../index.html" />
+    <link rel="next" title="Color prompts with readline" href="readline-color-prompt.html" />
+    <link rel="prev" title="Dart: development environment setup" href="dart-development-env-setup.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="readline-color-prompt.html" title="Color prompts with readline"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="dart-development-env-setup.html" title="Dart: development environment setup"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Development</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+
+  <div class="section" id="makefile-snippets">
+<h1>Makefile snippets<a class="headerlink" href="#makefile-snippets" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="quick-makefile-reference">
+<h2>Quick Makefile reference<a class="headerlink" href="#quick-makefile-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="special-macros">
+<h3>Special macros<a class="headerlink" href="#special-macros" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">$&#64;</span></tt> The name of the target</li>
+<li><tt class="docutils literal"><span class="pre">$?</span></tt> List of dependents more recent than the target</li>
+<li><tt class="docutils literal"><span class="pre">$^</span></tt> All the dependencies of the target</li>
+<li><tt class="docutils literal"><span class="pre">$+</span></tt> Like <tt class="docutils literal"><span class="pre">$^</span></tt>, but keeping duplicates and in order of apparence</li>
+<li><tt class="docutils literal"><span class="pre">$&lt;</span></tt> Only the first dependency; safer than <tt class="docutils literal"><span class="pre">$?</span></tt> when you have only one dependency that needs to be on the command</li>
+<li><tt class="docutils literal"><span class="pre">$*</span></tt> The matched part in wildcard targets. Eg, if the target label is <tt class="docutils literal"><span class="pre">%.c:</span></tt> and you call it with <tt class="docutils literal"><span class="pre">myfile.c</span></tt>, the value for <tt class="docutils literal"><span class="pre">$*</span></tt> will be <tt class="docutils literal"><span class="pre">myfile</span></tt>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="building-a-bunch-of-files">
+<h2>Building a bunch of files<a class="headerlink" href="#building-a-bunch-of-files" title="Permalink to this headline">¶</a></h2>
+<p>This is an example standard Makefile I use to build UI files from Qt Designer into Python modules.</p>
+<div class="highlight-makefile"><div class="highlight"><pre><span class="c"># Build the UIs</span>
+
+<span class="nv">ui_files</span> <span class="o">=</span> <span class="se">\</span>
+    ui_main_window.py <span class="se">\</span>
+    ui_my_dialog0.py <span class="se">\</span>
+    ui_my_dialog1.py <span class="se">\</span>
+    ui_my_dialog2.py
+<span class="nv">rc_files</span> <span class="o">=</span> resources_rc.py
+
+.PHONY : all
+.PHONY : clean clean_ui clean_rc clean_pyc
+
+all : ui rc
+
+ui: <span class="k">$(</span>ui_files<span class="k">)</span>
+rc: <span class="k">$(</span>rc_files<span class="k">)</span>
+
+<span class="k">$(</span>ui_files<span class="k">)</span>: ui_%.py : uis/%.ui
+<span class="c">    @## Create UI file</span>
+    pyuic4 -x <span class="nv">$&lt;</span> -o <span class="nv">$@</span>
+<span class="c">    @## Fix wrong import</span>
+<span class="c">    @# sed &quot;s/^import resources_rc$$/from gui import resources_rc/&quot; -i $@</span>
+
+<span class="k">$(</span>rc_files<span class="k">)</span>: %_rc.py : %.qrc
+    pyrcc4 -compress 9 <span class="nv">$&lt;</span> -o <span class="nv">$@</span>
+
+clean: clean_pyc clean_ui clean_rc
+
+clean_ui:
+    rm -f <span class="k">$(</span>ui_files<span class="k">)</span>
+
+clean_rc:
+    rm -f <span class="k">$(</span>rc_files<span class="k">)</span>
+
+clean_pyc:
+    rm -f *.pyc
+</pre></div>
+</div>
+</div>
+<div class="section" id="automatic-targets-list">
+<h2>Automatic targets list<a class="headerlink" href="#automatic-targets-list" title="Permalink to this headline">¶</a></h2>
+<p>In this example case, we have an indefinite bunch of <tt class="docutils literal"><span class="pre">.aa</span></tt> files, to be built in <tt class="docutils literal"><span class="pre">.bb</span></tt> files. To avoid writing the whole list of output <tt class="docutils literal"><span class="pre">.bb</span></tt> files, we can use the following method:</p>
+<div class="highlight-makefile"><div class="highlight"><pre><span class="c"># &quot;Build&quot; .aa files into .bb files (just prefixes each line with &#39;&gt;&gt;&gt; &#39;)</span>
+
+<span class="nv">LIBOBJECTS</span> <span class="o">:=</span> <span class="k">$(</span>patsubst %.aa,%.bb,<span class="k">$(</span>wildcard src/*.aa<span class="k">))</span>
+
+all: <span class="k">$(</span>LIBOBJECTS<span class="k">)</span>
+
+%.bb: %.aa
+<span class="c">        @# Build the .aa file into .bb file</span>
+        cat <span class="nv">$&lt;</span> | sed <span class="s1">&#39;s/^/&gt;&gt;&gt; /&#39;</span> &gt; <span class="nv">$@</span>
+
+clean:
+        rm <span class="k">$(</span>LIBOBJECTS<span class="k">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exporting-pngs-from-a-single-svg-file">
+<h2>Exporting PNGs from a single SVG file<a class="headerlink" href="#exporting-pngs-from-a-single-svg-file" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-makefile"><div class="highlight"><pre><span class="c">## Makefile to build the single images out of the big SVG</span>
+
+<span class="nv">INKSCAPE</span><span class="o">=</span>inkscape -z
+<span class="nv">SOURCE_IMAGE</span><span class="o">=</span>controls.svg
+<span class="nv">OUTPUT_IMAGES</span><span class="o">=</span>pan.png zoom.png
+
+.PHONY: all controls clean-elements
+
+all: controls
+
+clean: clean-controls
+
+controls: <span class="k">$(</span>OUTPUT_IMAGES<span class="k">)</span>
+
+clean-controls:
+    rm <span class="k">$(</span>OUTPUT_IMAGES<span class="k">)</span>
+
+pan.png: <span class="k">$(</span>SOURCE_IMAGE<span class="k">)</span>
+    <span class="k">$(</span>INKSCAPE<span class="k">)</span> --file<span class="o">=</span><span class="nv">$&lt;</span> --export-png<span class="o">=</span><span class="nv">$@</span> --export-area<span class="o">=</span>0:350:50:400
+
+zoom.png: <span class="k">$(</span>SOURCE_IMAGE<span class="k">)</span>
+    <span class="k">$(</span>INKSCAPE<span class="k">)</span> --file<span class="o">=</span><span class="nv">$&lt;</span> --export-png<span class="o">=</span><span class="nv">$@</span> --export-area<span class="o">=</span>50:350:75:400
+</pre></div>
+</div>
+</div>
+</div>
+
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
+        var disqus_identifier = "development/misc/makefile-snippets";
+	var disqus_title = "Hackzine Wiki";
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Makefile snippets</a><ul>
+<li><a class="reference internal" href="#quick-makefile-reference">Quick Makefile reference</a><ul>
+<li><a class="reference internal" href="#special-macros">Special macros</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#building-a-bunch-of-files">Building a bunch of files</a></li>
+<li><a class="reference internal" href="#automatic-targets-list">Automatic targets list</a></li>
+<li><a class="reference internal" href="#exporting-pngs-from-a-single-svg-file">Exporting PNGs from a single SVG file</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="dart-development-env-setup.html"
+                        title="previous chapter">Dart: development environment setup</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="readline-color-prompt.html"
+                        title="next chapter">Color prompts with readline</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/development/misc/makefile-snippets.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="readline-color-prompt.html" title="Color prompts with readline"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="dart-development-env-setup.html" title="Dart: development environment setup"
+             >previous</a> |</li>
+        <li><a href="../../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="../index.html" >Development</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Samuele ~redShadow~ Santi.
+      Last updated on 2013-03-19 16:34:46 +0100.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

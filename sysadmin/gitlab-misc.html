@@ -1,0 +1,198 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GitLab: misc &mdash; Hackzine Wiki</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Hackzine Wiki" href="../index.html" />
+    <link rel="up" title="Sysadmin" href="index.html" />
+    <link rel="next" title="KVM: Importing an OVA appliance" href="kvm-import-ova.html" />
+    <link rel="prev" title="Debian: registering an apt repository key" href="debian-register-apt-repo-key.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="kvm-import-ova.html" title="KVM: Importing an OVA appliance"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="debian-register-apt-repo-key.html" title="Debian: registering an apt repository key"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+
+  <div class="section" id="gitlab-misc">
+<h1>GitLab: misc<a class="headerlink" href="#gitlab-misc" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="export-existing-repositories-to-gitlab">
+<h2>Export existing repositories to gitlab<a class="headerlink" href="#export-existing-repositories-to-gitlab" title="Permalink to this headline">¶</a></h2>
+<p>GitLab can create projects for you bare repos</p>
+<ul class="simple">
+<li>Copy bare repositories to /home/git/repositories</li>
+<li>Run <tt class="docutils literal"><span class="pre">bundle</span> <span class="pre">exec</span> <span class="pre">rake</span> <span class="pre">gitlab:import:repos</span> <span class="pre">RAILS_ENV=production</span></tt></li>
+</ul>
+</div>
+<div class="section" id="rebuild-keys-in-gitolite-gitlab-4-2">
+<h2>Rebuild keys in gitolite (GitLab 4.2)<a class="headerlink" href="#rebuild-keys-in-gitolite-gitlab-4-2" title="Permalink to this headline">¶</a></h2>
+<p>Run, as the <tt class="docutils literal"><span class="pre">gitlab</span></tt> user, from <tt class="docutils literal"><span class="pre">/home/gitlab/gitlab</span></tt>:</p>
+<div class="highlight-python"><pre>bundle exec rake gitlab:gitolite:update_keys RAILS_ENV=production
+bundle exec rake gitlab:gitolite:update_repos RAILS_ENV=production</pre>
+</div>
+</div>
+<div class="section" id="run-checks">
+<h2>Run checks<a class="headerlink" href="#run-checks" title="Permalink to this headline">¶</a></h2>
+<p>Run, as the <tt class="docutils literal"><span class="pre">gitlab</span></tt> user, from <tt class="docutils literal"><span class="pre">/home/gitlab/gitlab</span></tt>:</p>
+<div class="highlight-python"><pre>bundle exec rake gitlab:check RAILS_ENV=production</pre>
+</div>
+</div>
+<div class="section" id="fix-rake-gitlab-3-something">
+<h2>Fix: rake (gitlab 3.something)<a class="headerlink" href="#fix-rake-gitlab-3-something" title="Permalink to this headline">¶</a></h2>
+<p>File <tt class="docutils literal"><span class="pre">lib/tasks/resque.rake</span></tt>:</p>
+<div class="highlight-ruby"><div class="highlight"><pre><span class="nb">require</span> <span class="s1">&#39;resque/tasks&#39;</span>
+
+<span class="c1"># Fix Exception</span>
+<span class="c1"># ActiveRecord::StatementInvalid</span>
+<span class="c1"># Error</span>
+<span class="c1"># PGError: ERROR: prepared statement &quot;a3&quot; already exists</span>
+<span class="n">task</span> <span class="s2">&quot;resque:setup&quot;</span> <span class="o">=&gt;</span> <span class="ss">:environment</span> <span class="k">do</span>
+  <span class="no">Resque</span><span class="o">.</span><span class="n">after_fork</span> <span class="k">do</span> <span class="o">|</span><span class="n">job</span><span class="o">|</span>
+    <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="o">.</span><span class="n">establish_connection</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">desc</span> <span class="s2">&quot;Alias for resque:work (To run workers on Heroku)&quot;</span>
+<span class="n">task</span> <span class="s2">&quot;jobs:work&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;resque:work&quot;</span>
+</pre></div>
+</div>
+<p>See: <a class="reference external" href="https://github.com/gitlabhq/gitlabhq/pull/1655/files">https://github.com/gitlabhq/gitlabhq/pull/1655/files</a></p>
+</div>
+<div class="section" id="fix-postgres-error-on-issues-gitlab-3-something">
+<h2>Fix: postgres error on issues (gitlab 3.something)<a class="headerlink" href="#fix-postgres-error-on-issues-gitlab-3-something" title="Permalink to this headline">¶</a></h2>
+<p>See <a class="reference external" href="https://gist.github.com/gitlabhq/gitlabhq/issues/1962">https://gist.github.com/gitlabhq/gitlabhq/issues/1962</a></p>
+<p><strong>Note:</strong> I ended up giving up using PostgreSQL with GitLab, and installed
+MySQL, as it seems the first one is not-so-well supported..</p>
+<div class="highlight-python"><pre>sudo -u postgres psql -d gitlabhq_production
+
+CREATE CAST (integer AS text) WITH INOUT AS IMPLICIT;</pre>
+</div>
+</div>
+</div>
+
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
+        var disqus_identifier = "sysadmin/gitlab-misc";
+	var disqus_title = "Hackzine Wiki";
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GitLab: misc</a><ul>
+<li><a class="reference internal" href="#export-existing-repositories-to-gitlab">Export existing repositories to gitlab</a></li>
+<li><a class="reference internal" href="#rebuild-keys-in-gitolite-gitlab-4-2">Rebuild keys in gitolite (GitLab 4.2)</a></li>
+<li><a class="reference internal" href="#run-checks">Run checks</a></li>
+<li><a class="reference internal" href="#fix-rake-gitlab-3-something">Fix: rake (gitlab 3.something)</a></li>
+<li><a class="reference internal" href="#fix-postgres-error-on-issues-gitlab-3-something">Fix: postgres error on issues (gitlab 3.something)</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="debian-register-apt-repo-key.html"
+                        title="previous chapter">Debian: registering an apt repository key</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="kvm-import-ova.html"
+                        title="next chapter">KVM: Importing an OVA appliance</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/sysadmin/gitlab-misc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="kvm-import-ova.html" title="KVM: Importing an OVA appliance"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="debian-register-apt-repo-key.html" title="Debian: registering an apt repository key"
+             >previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Samuele ~redShadow~ Santi.
+      Last updated on 2013-03-19 16:34:46 +0100.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

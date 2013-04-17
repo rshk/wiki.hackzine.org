@@ -1,0 +1,264 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GuruPlug: installing Debian &mdash; Hackzine Wiki</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Hackzine Wiki" href="../index.html" />
+    <link rel="up" title="Hardware" href="index.html" />
+    <link rel="next" title="GuruPlug: misc stuff" href="guruplug-misc.html" />
+    <link rel="prev" title="Arduino: Disable auto-reset" href="arduino-disable-auto-reset.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="guruplug-misc.html" title="GuruPlug: misc stuff"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="arduino-disable-auto-reset.html" title="Arduino: Disable auto-reset"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Hardware</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+
+  <div class="section" id="guruplug-installing-debian">
+<h1>GuruPlug: installing Debian<a class="headerlink" href="#guruplug-installing-debian" title="Permalink to this headline">¶</a></h1>
+<p>See also the full guide here: <a class="reference internal" href="guruplug-misc.html"><em>GuruPlug: misc stuff</em></a></p>
+<p><strong>Note:</strong> this is a mirror copy of <a class="reference external" href="http://www.cyrius.com/debian/kirkwood/sheevaplug/install.html">Installing Debian on Plug Computers</a></p>
+<p>This page describes how to install Debian 6.0 (squeeze) on plug computers,
+such as the SheevaPlug and GuruPlug.</p>
+<p><strong>Note:</strong> Actually, as of April 2012, the images are for Wheezy (7.0).</p>
+<p>The following devices are currently supported:</p>
+<ul class="simple">
+<li><strong>SheevaPlug</strong> (the SheevaPlug Development Kit)</li>
+<li><strong>eSATA SheevaPlug</strong></li>
+<li><strong>GuruPlug Server Standard</strong></li>
+<li><strong>GuruPlug Server Plus</strong></li>
+<li><strong>Seagate FreeAgent DockStar</strong>
+(<a class="reference external" href="http://www.cyrius.com/debian/kirkwood/sheevaplug/plugs.html#limited">limited support</a>:
+only if you added a serial console)</li>
+</ul>
+<p>Please read the <a class="reference external" href="http://www.cyrius.com/debian/kirkwood/sheevaplug/plugs.html">plug variants</a> page to find out about the status of other plug computers.</p>
+<p>The Debian installer doesn&#8217;t currently support installations to on-board flash
+storage, but you can use it to install to USB, SD or eSATA.</p>
+<p>In order to proceed, you will therefore need either a USB stick (or disk),
+an SD card or an external disk with an eSATA port.</p>
+<div class="section" id="preparation">
+<h2>Preparation<a class="headerlink" href="#preparation" title="Permalink to this headline">¶</a></h2>
+<p>Make sure to connect an Ethernet cable to your plug computer (if you haven&#8217;t
+already) because the installer will download files from the Internet for the
+installation.</p>
+</div>
+<div class="section" id="upgrading-u-boot">
+<h2>Upgrading U-Boot<a class="headerlink" href="#upgrading-u-boot" title="Permalink to this headline">¶</a></h2>
+<p>You have to upgrade the u-boot boot loader before you can install Debian.</p>
+<p>Please visit the page describing the <a class="reference external" href="http://www.cyrius.com/debian/kirkwood/sheevaplug/uboot-upgrade.html">u-boot upgrade process</a> (mirrored
+in <a class="reference internal" href="guruplug-uboot-upgrade-guide.html"><em>GuruPlug: uBoot upgrade guide</em></a>) to ensure that you have the right
+version of u-boot before proceeding with the installation of Debian.</p>
+</div>
+<div class="section" id="starting-the-installer">
+<h2>Starting the Installer<a class="headerlink" href="#starting-the-installer" title="Permalink to this headline">¶</a></h2>
+<p>First of all, you have to download the installer. Download the  <a class="reference external" href="ftp://ftp.debian.org/debian/dists/stable/main/installer-armel/current/images/kirkwood/netboot/marvell/sheevaplug/uImage">uImage</a> and
+<a class="reference external" href="ftp://ftp.debian.org/debian/dists/stable/main/installer-armel/current/images/kirkwood/netboot/marvell/sheevaplug/uInitrd">uInitrd</a> and store them either on a USB stick, MMC/SD card or a TFTP server.</p>
+<p>Now connect the install medium (USB stick, SD card or eSATA disk) to your plug
+computer and connect a mini-USB connector in order to access the serial console.</p>
+<p>Start your plug computer and a few seconds later you should be able to connect
+to <tt class="docutils literal"><span class="pre">/dev/ttyUSB1</span></tt> with 115200 baud. If you need help accessing the serial
+console, check out <a class="reference external" href="http://www.plugcomputer.org/plugwiki/index.php/Serial_terminal_program">this guide</a>
+on the Plug Computer wiki. When you get serial output, press a key to interrupt
+the boot process so you can load the installer.</p>
+<p>The instructions for loading the installer depend on where you want to load the
+installer from. Also note that you may have to replace fatload with ext2load in
+case you used the ext2 or ext3 filesystem on your USB stick or MMC card.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For GuruPlug users: on the GuruPlug, MMC/SD cards show up as USB devices.
+Therefore, if you&#8217;re using a MMC/SD card, make sure to follow the
+instructions for USB devices and not for MMC/SD.</p>
+</div>
+<p><strong>USB:</strong> If you stored the installer on a USB stick, please use:</p>
+<div class="highlight-python"><pre>usb start
+fatload usb 0:1 0x00800000 /uImage
+fatload usb 0:1 0x01100000 /uInitrd</pre>
+</div>
+<p><strong>SD card:</strong> for MMC/SD cards, use:</p>
+<div class="highlight-python"><pre>mmc init
+fatload mmc 0:1 0x00800000 /uImage
+fatload mmc 0:1 0x01100000 /uInitrd</pre>
+</div>
+<p><strong>TFTP:</strong> if you want to load the installer via the network from a TFTP server,
+use this:</p>
+<div class="highlight-python"><pre>setenv serverip 192.168.1.2
+setenv ipaddr 192.168.1.147
+tftpboot 0x00800000 uImage
+tftpboot 0x01100000 uInitrd</pre>
+</div>
+<p>Of course, you have to replace 192.168.1.2 with the IP address of your TFTP server.</p>
+<p>Finally, start the installer:</p>
+<div class="highlight-python"><pre>setenv bootargs console=ttyS0,115200n8 base-installer/initramfs-tools/driver-policy=most
+bootm 0x00800000 0x01100000</pre>
+</div>
+</div>
+<div class="section" id="the-installation">
+<h2>The Installation<a class="headerlink" href="#the-installation" title="Permalink to this headline">¶</a></h2>
+<p>The installation itself should be pretty standard and you can follow the
+<a class="reference external" href="http://www.debian.org/releases/stable/armel">installation guide</a>.</p>
+<p>The installer knows about all supported plug computers and will create a
+bootable kernel and ramdisk at the end of the installation.
+The installer will also offer a partition layout that is known to work.
+If you want to choose a different layout, make sure that you create a small
+(ca. 150 MB) <tt class="docutils literal"><span class="pre">/boot</span></tt> partition with the ext2 filesystem.</p>
+<p>When the installation is done, you have to configure u-boot so it will
+automatically boot Debian.
+Interrupt the boot process of u-boot and enter the following commands.</p>
+<p>For <strong>USB</strong>, use this:</p>
+<div class="highlight-python"><pre>setenv bootargs_console console=ttyS0,115200
+setenv bootcmd_usb 'usb start; ext2load usb 0:1 0x00800000 /uImage; ext2load usb 0:1 0x01100000 /uInitrd'
+setenv bootcmd 'setenv bootargs $(bootargs_console); run bootcmd_usb; bootm 0x00800000 0x01100000'
+saveenv</pre>
+</div>
+<p>If you&#8217;re using an <strong>SD card</strong>, use these commands instead:</p>
+<div class="highlight-python"><pre>setenv bootargs_console console=ttyS0,115200
+setenv bootcmd_mmc 'mmc init; ext2load mmc 0:1 0x00800000 /uImage; ext2load mmc 0:1 0x01100000 /uInitrd'
+setenv bootcmd 'setenv bootargs $(bootargs_console); run bootcmd_mmc; bootm 0x00800000 0x01100000'
+saveenv</pre>
+</div>
+<p>Finally, use these commands to boot from <strong>eSATA</strong>:</p>
+<div class="highlight-python"><pre>setenv bootargs_console console=ttyS0,115200
+setenv bootcmd_sata 'ide reset; ext2load ide 0:1 0x00800000 /uImage; ext2load ide 0:1 0x01100000 /uInitrd'
+setenv bootcmd 'setenv bootargs $(bootargs_console); run bootcmd_sata; bootm 0x00800000 0x01100000'
+saveenv</pre>
+</div>
+<p>The commands above use 0:1 to refer to your boot partition.
+This indicates device 0 and partition 1.
+Depending on your configuration and device, you may have to specify a different
+boot partition.
+Please refer to the explanation on <a class="reference external" href="http://www.cyrius.com/debian/kirkwood/sheevaplug/troubleshooting.html#dev-part">how to find out your boot partition</a> in
+case your device does not boot with 0:1.</p>
+<p>Your plug computer is now ready to boot Debian from USB, SD or eSATA and it
+will automatically do so whenever you turn on the plug computer.</p>
+<p>You can now type the following command to boot:</p>
+<div class="highlight-python"><pre>run bootcmd</pre>
+</div>
+<p>Go back to my <a class="reference external" href="http://www.cyrius.com/debian/kirkwood/sheevaplug/index.html">Debian on Plug Computer</a> page.</p>
+</div>
+</div>
+
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
+        var disqus_identifier = "hardware/guruplug-installing-debian";
+	var disqus_title = "Hackzine Wiki";
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GuruPlug: installing Debian</a><ul>
+<li><a class="reference internal" href="#preparation">Preparation</a></li>
+<li><a class="reference internal" href="#upgrading-u-boot">Upgrading U-Boot</a></li>
+<li><a class="reference internal" href="#starting-the-installer">Starting the Installer</a></li>
+<li><a class="reference internal" href="#the-installation">The Installation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="arduino-disable-auto-reset.html"
+                        title="previous chapter">Arduino: Disable auto-reset</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="guruplug-misc.html"
+                        title="next chapter">GuruPlug: misc stuff</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/hardware/guruplug-installing-debian.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="guruplug-misc.html" title="GuruPlug: misc stuff"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="arduino-disable-auto-reset.html" title="Arduino: Disable auto-reset"
+             >previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" >Hardware</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Samuele ~redShadow~ Santi.
+      Last updated on 2013-03-19 16:54:28 +0100.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
