@@ -28,7 +28,7 @@
     <link rel="top" title="Hackzine Wiki" href="../index.html" />
     <link rel="up" title="Sysadmin" href="index.html" />
     <link rel="next" title="PostgreSQL: Make root log in as postgres user" href="postgresql-make-root-login-as-postgres.html" />
-    <link rel="prev" title="Linux: Basic LUKS usage" href="linux-using-luks.html" /> 
+    <link rel="prev" title="OpenSSL Basics and commands" href="openssl-commands.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,7 +41,7 @@
           <a href="postgresql-make-root-login-as-postgres.html" title="PostgreSQL: Make root log in as postgres user"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="linux-using-luks.html" title="Linux: Basic LUKS usage"
+          <a href="openssl-commands.html" title="OpenSSL Basics and commands"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
@@ -99,25 +99,25 @@ do not receive).</p>
 37
 38
 39
-40</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">## See /usr/share/postfix/main.cf.dist for a commented, more complete version</span>
+40</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">## See /usr/share/postfix/main.cf.dist for a commented, more complete version</span>
 
 <span class="na">smtpd_banner</span> <span class="o">=</span> <span class="s">$myhostname ESMTP $mail_name (Debian/GNU)</span>
 <span class="na">biff</span> <span class="o">=</span> <span class="s">no</span>
 
-<span class="c">## appending .domain is the MUA&#39;s job.</span>
+<span class="c1">## appending .domain is the MUA&#39;s job.</span>
 <span class="na">append_dot_mydomain</span> <span class="o">=</span> <span class="s">no</span>
 
 <span class="na">readme_directory</span> <span class="o">=</span> <span class="s">no</span>
 
-<span class="c">## TLS parameters</span>
+<span class="c1">## TLS parameters</span>
 <span class="na">smtpd_tls_cert_file</span><span class="o">=</span><span class="s">/etc/ssl/certs/ssl-cert-snakeoil.pem</span>
 <span class="na">smtpd_tls_key_file</span><span class="o">=</span><span class="s">/etc/ssl/private/ssl-cert-snakeoil.key</span>
 <span class="na">smtpd_use_tls</span><span class="o">=</span><span class="s">yes</span>
 <span class="na">smtpd_tls_session_cache_database</span> <span class="o">=</span> <span class="s">btree:${data_directory}/smtpd_scache</span>
 <span class="na">smtp_tls_session_cache_database</span> <span class="o">=</span> <span class="s">btree:${data_directory}/smtp_scache</span>
 
-<span class="c">## See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for</span>
-<span class="c">## information on enabling SSL in the smtp client.</span>
+<span class="c1">## See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for</span>
+<span class="c1">## information on enabling SSL in the smtp client.</span>
 
 <span class="na">myhostname</span> <span class="o">=</span> <span class="s">myhost.mydomain.org</span>
 <span class="na">mydomain</span> <span class="o">=</span> <span class="s">mydomain.org</span>
@@ -171,8 +171,8 @@ debian 6.0 &#8220;Squeeze&#8221; can be found here: <a class="reference external
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="linux-using-luks.html"
-                        title="previous chapter">Linux: Basic LUKS usage</a></p>
+  <p class="topless"><a href="openssl-commands.html"
+                        title="previous chapter">OpenSSL Basics and commands</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="postgresql-make-root-login-as-postgres.html"
                         title="next chapter">PostgreSQL: Make root log in as postgres user</a></p>
@@ -208,7 +208,7 @@ debian 6.0 &#8220;Squeeze&#8221; can be found here: <a class="reference external
           <a href="postgresql-make-root-login-as-postgres.html" title="PostgreSQL: Make root log in as postgres user"
              >next</a> |</li>
         <li class="right" >
-          <a href="linux-using-luks.html" title="Linux: Basic LUKS usage"
+          <a href="openssl-commands.html" title="OpenSSL Basics and commands"
              >previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
@@ -216,7 +216,7 @@ debian 6.0 &#8220;Squeeze&#8221; can be found here: <a class="reference external
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-05-19 04:44:22 +0200.
+      Last updated on 2013-07-19 10:44:27 +0200.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

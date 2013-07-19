@@ -82,13 +82,13 @@
     ui_my_dialog2.py
 <span class="nv">rc_files</span> <span class="o">=</span> resources_rc.py
 
-.PHONY : all
-.PHONY : clean clean_ui clean_rc clean_pyc
+<span class="nf">.PHONY </span><span class="o">:</span> <span class="m">all</span>
+<span class="nf">.PHONY </span><span class="o">:</span> <span class="m">clean clean_ui clean_rc clean_pyc</span>
 
-all : ui rc
+<span class="nf">all </span><span class="o">:</span> <span class="m">ui rc</span>
 
-ui: <span class="k">$(</span>ui_files<span class="k">)</span>
-rc: <span class="k">$(</span>rc_files<span class="k">)</span>
+<span class="nf">ui</span><span class="o">:</span> <span class="m">$(ui_files)</span>
+<span class="nf">rc</span><span class="o">:</span> <span class="m">$(rc_files)</span>
 
 <span class="k">$(</span>ui_files<span class="k">)</span>: ui_%.py : uis/%.ui
 <span class="c">    @## Create UI file</span>
@@ -119,13 +119,13 @@ clean_pyc:
 
 <span class="nv">LIBOBJECTS</span> <span class="o">:=</span> <span class="k">$(</span>patsubst %.aa,%.bb,<span class="k">$(</span>wildcard src/*.aa<span class="k">))</span>
 
-all: <span class="k">$(</span>LIBOBJECTS<span class="k">)</span>
+<span class="nf">all</span><span class="o">:</span> <span class="m">$(LIBOBJECTS)</span>
 
-%.bb: %.aa
+<span class="nf">%.bb</span><span class="o">:</span> <span class="m">%.aa</span>
 <span class="c">        @# Build the .aa file into .bb file</span>
         cat <span class="nv">$&lt;</span> | sed <span class="s1">&#39;s/^/&gt;&gt;&gt; /&#39;</span> &gt; <span class="nv">$@</span>
 
-clean:
+<span class="nf">clean</span><span class="o">:</span>
         rm <span class="k">$(</span>LIBOBJECTS<span class="k">)</span>
 </pre></div>
 </div>
@@ -138,21 +138,21 @@ clean:
 <span class="nv">SOURCE_IMAGE</span><span class="o">=</span>controls.svg
 <span class="nv">OUTPUT_IMAGES</span><span class="o">=</span>pan.png zoom.png
 
-.PHONY: all controls clean-elements
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="m">all controls clean-elements</span>
 
-all: controls
+<span class="nf">all</span><span class="o">:</span> <span class="m">controls</span>
 
-clean: clean-controls
+<span class="nf">clean</span><span class="o">:</span> <span class="m">clean-controls</span>
 
-controls: <span class="k">$(</span>OUTPUT_IMAGES<span class="k">)</span>
+<span class="nf">controls</span><span class="o">:</span> <span class="m">$(OUTPUT_IMAGES)</span>
 
-clean-controls:
+<span class="nf">clean-controls</span><span class="o">:</span>
     rm <span class="k">$(</span>OUTPUT_IMAGES<span class="k">)</span>
 
-pan.png: <span class="k">$(</span>SOURCE_IMAGE<span class="k">)</span>
+<span class="nf">pan.png</span><span class="o">:</span> <span class="m">$(SOURCE_IMAGE)</span>
     <span class="k">$(</span>INKSCAPE<span class="k">)</span> --file<span class="o">=</span><span class="nv">$&lt;</span> --export-png<span class="o">=</span><span class="nv">$@</span> --export-area<span class="o">=</span>0:350:50:400
 
-zoom.png: <span class="k">$(</span>SOURCE_IMAGE<span class="k">)</span>
+<span class="nf">zoom.png</span><span class="o">:</span> <span class="m">$(SOURCE_IMAGE)</span>
     <span class="k">$(</span>INKSCAPE<span class="k">)</span> --file<span class="o">=</span><span class="nv">$&lt;</span> --export-png<span class="o">=</span><span class="nv">$@</span> --export-area<span class="o">=</span>50:350:75:400
 </pre></div>
 </div>
@@ -242,7 +242,7 @@ zoom.png: <span class="k">$(</span>SOURCE_IMAGE<span class="k">)</span>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-05-19 04:44:22 +0200.
+      Last updated on 2013-07-19 10:44:27 +0200.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
