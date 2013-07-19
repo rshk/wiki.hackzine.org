@@ -70,9 +70,49 @@ of the library + python bindings with something like this:</p>
 make <span class="o">&amp;&amp;</span> make install
 
 <span class="nb">cd</span> /path/to/python-module-dir/
-python setup.py build_ext -I <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/include/ -L <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/lib/ install
+python setup.py build_ext <span class="se">\</span>
+    -I <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/include/ <span class="se">\</span>
+    -L <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/lib/ <span class="se">\</span>
+    -R <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/lib/ <span class="se">\</span>
+    install
 </pre></div>
 </div>
+<p>The trick here is to use <tt class="docutils literal"><span class="pre">-I</span></tt> to tell te compiler where to look for
+header files, <tt class="docutils literal"><span class="pre">-L</span></tt> to tell the linker where to find libraries
+and <tt class="docutils literal"><span class="pre">-R</span></tt> to tell the linker where to search for libraries at runtime:</p>
+<div class="highlight-python"><pre>--include-dirs (-I)  list of directories to search for header files
+                     (separated by ':')
+--library-dirs (-L)  directories to search for external C libraries
+                     (separated by ':')
+--rpath (-R)         directories to search for shared C libraries at runtime</pre>
+</div>
+<p>(from <tt class="docutils literal"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">build_ext</span> <span class="pre">--help</span></tt>)</p>
+</div>
+<div class="section" id="example-kyotocabinet">
+<h2>Example: kyotocabinet<a class="headerlink" href="#example-kyotocabinet" title="Permalink to this headline">¶</a></h2>
+<p>As a real-world use-case example, I used this method to install <a class="reference external" href="http://fallabs.com/kyotocabinet/">Kyoto Cabinet</a>
+inside a virtualenv.</p>
+<p>This is the complete procedure I followed:</p>
+<div class="highlight-bash"><div class="highlight"><pre>mkdir -p <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/tmp
+
+<span class="nb">cd</span> <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/tmp
+wget http://fallabs.com/kyotocabinet/pkg/kyotocabinet-1.2.76.tar.gz
+tar xzvf kyotocabinet-1.2.76.tar.gz
+<span class="nb">cd </span>kyotocabinet-1.2.76/
+./configure --prefix<span class="o">=</span><span class="s2">&quot;$VIRTUAL_ENV&quot;</span>
+make
+make install
+
+<span class="nb">cd</span> <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/tmp
+wget http://fallabs.com/kyotocabinet/pythonlegacypkg/kyotocabinet-python-legacy-1.18.tar.gz
+tar xzvf kyotocabinet-python-legacy-1.18.tar.gz
+<span class="nb">cd </span>kyotocabinet-python-legacy-1.18/
+python setup.py build_ext <span class="se">\</span>
+    -I <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/include/ -L <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/lib/ <span class="se">\</span>
+    -R <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/lib/ install
+</pre></div>
+</div>
+<p><strong>todo:</strong> put all this in the setup.py for the extension module, as eg. pyzmq does</p>
 </div>
 </div>
 
@@ -103,6 +143,7 @@ python setup.py build_ext -I <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/in
   <ul>
 <li><a class="reference internal" href="#">Python: build extension module against library in non-standard path</a><ul>
 <li><a class="reference internal" href="#using-virtualenv">Using virtualenv</a></li>
+<li><a class="reference internal" href="#example-kyotocabinet">Example: kyotocabinet</a></li>
 </ul>
 </li>
 </ul>
@@ -153,7 +194,7 @@ python setup.py build_ext -I <span class="s2">&quot;$VIRTUAL_ENV&quot;</span>/in
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-05-19 04:44:22 +0200.
+      Last updated on 2013-05-20 18:20:05 +0200.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

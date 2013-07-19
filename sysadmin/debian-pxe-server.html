@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Debian: installing a PXE server on Wheezy &mdash; Hackzine Wiki</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Hackzine Wiki" href="../index.html" />
+    <link rel="up" title="Sysadmin" href="index.html" />
+    <link rel="next" title="Debian: regenerate SSH keys" href="debian-regenerate-ssh-keys.html" />
+    <link rel="prev" title="Debian: prevent installation of recommended packages" href="debian-no-install-recommended-packages.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="debian-regenerate-ssh-keys.html" title="Debian: regenerate SSH keys"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="debian-no-install-recommended-packages.html" title="Debian: prevent installation of recommended packages"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+
+  <div class="section" id="debian-installing-a-pxe-server-on-wheezy">
+<h1>Debian: installing a PXE server on Wheezy<a class="headerlink" href="#debian-installing-a-pxe-server-on-wheezy" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installing-tftp-server">
+<h2>Installing tftp server<a class="headerlink" href="#installing-tftp-server" title="Permalink to this headline">¶</a></h2>
+<p>First, install the TFTP server:</p>
+<div class="highlight-python"><pre>apt-get install tftpd-hpa</pre>
+</div>
+<p>Default configuration should be OK:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># cat /etc/default/tftpd-hpa</span>
+<span class="c"># /etc/default/tftpd-hpa</span>
+
+<span class="n">TFTP_USERNAME</span><span class="o">=</span><span class="s">&quot;tftp&quot;</span>
+<span class="n">TFTP_DIRECTORY</span><span class="o">=</span><span class="s">&quot;/srv/tftp&quot;</span>
+<span class="n">TFTP_ADDRESS</span><span class="o">=</span><span class="s">&quot;0.0.0.0:69&quot;</span>
+<span class="n">TFTP_OPTIONS</span><span class="o">=</span><span class="s">&quot;--secure&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuring-the-dhcp-server">
+<h2>Configuring the DHCP server<a class="headerlink" href="#configuring-the-dhcp-server" title="Permalink to this headline">¶</a></h2>
+<p>This is the configuration I&#8217;m using on my DHCP server.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You&#8217;ll have to use a decent dhcp server, like a linux box or a cisco,
+those plastic things you buy at the supermarket usually don&#8217;t fit, sorry.</p>
+</div>
+<div class="highlight-python"><pre>allow booting;
+allow bootp;
+
+
+## Configuration for the lan
+subnet 192.168.0.0 netmask 255.255.0.0 {
+  option routers 192.168.1.1;
+  filename "pxelinux.0";
+  option broadcast-address 192.168.255.255;
+  next-server 192.168.1.2;
+
+  # Unknown clients get this pool.
+  pool {
+    max-lease-time 600;
+    range dynamic-bootp 192.168.20.20 192.168.20.253;
+    allow unknown-clients;
+  }
+
+  # Known clients get this pool.
+  pool {
+    max-lease-time 28800;
+    range dynamic-bootp 192.168.1.1 192.168.10.254;
+    deny unknown-clients;
+  }
+}</pre>
+</div>
+<p>In short, you have to add the <tt class="docutils literal"><span class="pre">allow</span> <span class="pre">booting</span></tt> and <tt class="docutils literal"><span class="pre">allow</span> <span class="pre">bootp</span></tt>
+directives, specify the <tt class="docutils literal"><span class="pre">filename</span></tt> in the pool and add <tt class="docutils literal"><span class="pre">dynamic-bootp</span></tt>
+to your <tt class="docutils literal"><span class="pre">range</span></tt> directives in the pools (or in the subnet if you specify
+it there).</p>
+</div>
+<div class="section" id="adding-netboot-images-for-installers">
+<h2>Adding netboot images for installers<a class="headerlink" href="#adding-netboot-images-for-installers" title="Permalink to this headline">¶</a></h2>
+<p>For example, the debian wheezy installer for amd64 is a good fit for this:</p>
+<blockquote>
+<div>wget <a class="reference external" href="http://ftp.debian.org/debian/debian/dists/wheezy/main/installer-amd64/current/images/netboot/netboot.tar.gz">http://ftp.debian.org/debian/debian/dists/wheezy/main/installer-amd64/current/images/netboot/netboot.tar.gz</a></div></blockquote>
+<p>To get it up &amp; running, simply extract the tar in the <tt class="docutils literal"><span class="pre">/srv/tftp</span></tt> folder.</p>
+<p>If you list the contents of the directory later, you&#8217;ll see you now have:</p>
+<blockquote>
+<div>version.info
+pxelinux.cfg -&gt; debian-installer/amd64/pxelinux.cfg
+pxelinux.0 -&gt; debian-installer/amd64/pxelinux.0
+debian-installer/</div></blockquote>
+<p><tt class="docutils literal"><span class="pre">pxelinux.0</span></tt> is the executable that will be launched first (it&#8217;s the one
+referenced by the DHCP configuration entry..)</p>
+<p><tt class="docutils literal"><span class="pre">pxelinux.cfg</span></tt> is a directory containing configuration files</p>
+<p><tt class="docutils literal"><span class="pre">debian-installer/amd64</span></tt> contains some other boot screens, the actual
+<tt class="docutils literal"><span class="pre">pxelinux.0</span></tt> and <tt class="docutils literal"><span class="pre">pxelinux.cfg</span></tt>, along with a kernel and initrd images.</p>
+<p>If you&#8217;re ok with only one image, that automatically gets started after
+boot from PXE, you&#8217;re done here. If not, keep reading.</p>
+</div>
+<div class="section" id="booting-multiple-images-from-the-same-pxe-server">
+<h2>Booting multiple images from the same PXE server<a class="headerlink" href="#booting-multiple-images-from-the-same-pxe-server" title="Permalink to this headline">¶</a></h2>
+<p>Since you&#8217;ll very likely need multiple installation images (eg. for
+different architectures, distros, ...), we&#8217;re now going to create
+some configuration suitable for allowing you to choose amongst a collection
+of images to boot from.</p>
+<p>So, start by removing the symlink to <tt class="docutils literal"><span class="pre">pxelinux.cfg</span></tt>, containing
+the configuration used to boot debian, and replace it with a directory.</p>
+<blockquote>
+<div>cd /srv/tftp
+rm pxelinux.cfg
+mkdir pxelinux.cfg</div></blockquote>
+<p>Also, copy <tt class="docutils literal"><span class="pre">debian-installer/amd64/boot-screens/vesamenu.c32</span></tt> to
+the <tt class="docutils literal"><span class="pre">/srv/tftp</span></tt> folder, as we will need it later:</p>
+<div class="highlight-python"><pre>cp debian-installer/amd64/boot-screens/vesamenu.c32 .</pre>
+</div>
+<p>You can either keep the symlink to <tt class="docutils literal"><span class="pre">pxelinux.0</span></tt> or copy it over,
+it doesn&#8217;t matter.</p>
+<p>Then, create the following files:</p>
+<p>pxelinux.cfg/default:</p>
+<div class="highlight-python"><pre>default vesamenu.c32
+prompt 0
+timeout 0
+
+menu title PXE Boot Menu
+menu include pxelinux.cfg/graphics.conf
+
+label Install Debian Wheezy amd64
+      menu label ^Debian Wheezy amd64
+      kernel vesamenu.c32
+      append debian-installer/amd64/boot-screens/menu.cfg</pre>
+</div>
+<p>pxelinux.cfg/graphics.conf:</p>
+<div class="highlight-python"><pre>menu background     #ff000000
+menu color background   0   * #ff000000 *
+menu color title    1;33    #ffffff00 * *
+menu color border   32  #ff008800 * *
+menu color help     37;40   #ffdddd00 #00000000 none
+
+menu color tabmsg   37;40   #80ffffff #00000000 *
+menu color hotsel   30;47   #40000000 #20ffffff *
+menu color sel      30;47   #40000000 #20ffffff *
+menu color scrollbar    30;47   #40000000 #20ffffff *
+
+menu width 80
+menu margin 10
+menu rows 15
+menu tabmsgrow 18
+menu cmdlinerow 18
+menu endrow 24
+menu passwordrow 11
+menu timeoutrow 20
+menu vshift 6
+
+menu master passwd yourpassword
+menu passprompt enter password:
+menu passwordmargin 26
+menu passwordrow 12
+
+noescape 1
+allowoptions 0</pre>
+</div>
+<p>While not strictly necessary, the latter will provide some nice theming
+of the menu. Yo can specify a bunch of customizations, have a look at
+<a class="reference external" href="http://www.syslinux.org/wiki/index.php/Comboot/menu.c32">http://www.syslinux.org/wiki/index.php/Comboot/menu.c32</a>.</p>
+<p>If everything went fine, booting from the PXE will now show you
+a menu which allows you choose the (one!) image from which to boot.</p>
+<p>Now, in order to add, eg, the image of the installer for wheezy i386,
+simply extract the <tt class="docutils literal"><span class="pre">debian-installer</span></tt> directory and add an entry to
+the boot menu:</p>
+<blockquote>
+<div>cd /srv/tftp
+wget <a class="reference external" href="http://ftp.debian.org/debian/dists/wheezy/main/installer-i386/current/images/netboot/netboot.tar.gz">http://ftp.debian.org/debian/dists/wheezy/main/installer-i386/current/images/netboot/netboot.tar.gz</a> -O wheezy-i386.tar.gz
+tar xzvf wheezy-i386.tar.gz ./debian-installer/</div></blockquote>
+<p>add to <tt class="docutils literal"><span class="pre">pxelinux.cfg/default</span></tt>:</p>
+<div class="highlight-python"><pre>label Install Debian Wheezy i386
+      menu label ^Debian Wheezy i386
+      kernel vesamenu.c32
+      append debian-installer/i386/boot-screens/menu.cfg</pre>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not extract the whole archive, or you&#8217;ll risk overriding
+other things, such as pxelinux.0 and pxelinux.cfg!</p>
+</div>
+<div class="section" id="adding-images-for-squeeze">
+<h3>Adding images for squeeze<a class="headerlink" href="#adding-images-for-squeeze" title="Permalink to this headline">¶</a></h3>
+<p>If you want the squeeze (old stable) installer too, you&#8217;ll have to
+customize things further, as the contents of both installers are named
+the same.</p>
+<p>For example:</p>
+<div class="highlight-python"><pre>cd /tmp
+wget http://ftp.debian.org/debian/dists/squeeze/main/installer-amd64/current/images/netboot/netboot.tar.gz -O squeeze-amd64.tar.gz
+tar xzvf squeeze-amd64.tar.gz ./debian-installer/
+find debian-installer/ -type f -print0 | xargs -0 sed "s,debian-installer/,debian-installer/squeeze/," -i
+mkdir -p /srv/tftp/debian-installer/squeeze/
+mv debian-installer/amd64 /srv/tftp/debian-installer/squeeze/</pre>
+</div>
+<p>add to <tt class="docutils literal"><span class="pre">pxelinux.cfg/default</span></tt>:</p>
+<div class="highlight-python"><pre>label Install Debian Squeeze amd64
+      menu label ^Debian Squeeze amd64
+      kernel vesamenu.c32
+      append debian-installer/squeeze/amd64/boot-screens/menu.cfg</pre>
+</div>
+</div>
+<div class="section" id="adding-ubuntu-images">
+<h3>Adding ubuntu images<a class="headerlink" href="#adding-ubuntu-images" title="Permalink to this headline">¶</a></h3>
+<p>For example, we want to add the ubuntu images for the LTS (12.04 precise)
+and latest (13.04 raring) versions, both for i386 and amd64:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">TMPDIR</span><span class="o">=</span><span class="s2">&quot;$( mktemp -d )&quot;</span>
+<span class="nb">cd</span> <span class="s2">&quot;$TMPDIR&quot;</span>
+
+wget http://archive.ubuntu.com/ubuntu/dists/precise-updates/main/installer-i386/current/images/netboot/netboot.tar.gz -O ubuntu-precise-i386.tar.gz
+wget http://archive.ubuntu.com/ubuntu/dists/precise-updates/main/installer-amd64/current/images/netboot/netboot.tar.gz -O ubuntu-precise-amd64.tar.gz
+wget http://archive.ubuntu.com/ubuntu/dists/raring/main/installer-i386/current/images/netboot/netboot.tar.gz -O ubuntu-raring-i386.tar.gz
+wget http://archive.ubuntu.com/ubuntu/dists/raring/main/installer-amd64/current/images/netboot/netboot.tar.gz -O ubuntu-raring-amd64.tar.gz
+
+mkdir _ubuntu-installer
+
+<span class="k">for </span>DIST in precise raring; <span class="k">do</span>
+<span class="k">    </span>mkdir -p <span class="s2">&quot;./_ubuntu-installer/${DIST}&quot;</span>
+    <span class="k">for </span>ARCH in i386 amd64; <span class="k">do</span>
+<span class="k">        </span>tar xzvf <span class="s2">&quot;ubuntu-${DIST}-${ARCH}&quot;</span>.tar.gz ./ubuntu-installer/
+        find ./ubuntu-installer/ -type f -print0 | <span class="se">\</span>
+            xargs -0 sed <span class="s2">&quot;s,ubuntu-installer/,ubuntu-installer/${DIST}/,&quot;</span> -i
+        mv <span class="s2">&quot;./ubuntu-installer/${ARCH}/&quot;</span> <span class="s2">&quot;./_ubuntu-installer/${DIST}&quot;</span>
+        rm -rfv ./ubuntu-installer/
+    <span class="k">done</span>
+<span class="k">done</span>
+
+mkdir -p /srv/tftp/ubuntu-installer/
+mv -t /srv/tftp/ubuntu-installer/ ./_ubuntu-installer/*
+
+<span class="nb">cd</span> -
+rm -r <span class="s2">&quot;$TMPDIR&quot;</span>
+</pre></div>
+</div>
+<p>Create a new menu for the Ubuntu installers,
+eg. <tt class="docutils literal"><span class="pre">pxelinux.cfg/ubuntu-install.cfg</span></tt>:</p>
+<div class="highlight-bash"><div class="highlight"><pre>cat &gt; /srv/tftp/pxelinux.cfg/ubuntu-install.cfg <span class="s">&lt;&lt; EOF</span>
+<span class="s">default vesamenu.c32</span>
+<span class="s">prompt 0</span>
+<span class="s">timeout 0</span>
+<span class="s">menu title Ubuntu Installers</span>
+<span class="s">menu include pxelinux.cfg/graphics.conf</span>
+
+<span class="s">EOF</span>
+
+<span class="k">for </span>DIST in precise raring; <span class="k">do</span>
+<span class="k">    for </span>ARCH in i386 amd64; <span class="k">do</span>
+<span class="k">        </span><span class="nb">echo</span> <span class="s2">&quot;label Install Ubuntu ${DIST} ${ARCH}&quot;</span>
+        <span class="nb">echo</span> <span class="s2">&quot;      menu label ^Ubuntu ${DIST} ${ARCH}&quot;</span>
+        <span class="nb">echo</span> <span class="s2">&quot;      kernel vesamenu.c32&quot;</span>
+        <span class="nb">echo</span> <span class="s2">&quot;      append ubuntu-installer/${DIST}/${ARCH}/boot-screens/menu.cfg&quot;</span>
+        <span class="nb">echo</span>
+<span class="nb">    </span><span class="k">done</span>
+<span class="k">done</span> &gt;&gt; /srv/tftp/pxelinux.cfg/ubuntu-install.cfg
+</pre></div>
+</div>
+<p>and link it from <tt class="docutils literal"><span class="pre">pxelinux.cfg/default</span></tt>:</p>
+<div class="highlight-python"><pre>label ubuntu_install
+      menu label ^Ubuntu Installers
+      kernel vesamenu.c32
+      append pxelinux.cfg/ubuntu-install.cfg</pre>
+</div>
+<p><strong>todo</strong> write some helper application to install images to appropriate places.
+It would be nice to have something, working at least for netboot images
+of  the major distributions, plus some common live.</p>
+</div>
+</div>
+<div class="section" id="booting-a-live-distribution">
+<h2>Booting a live distribution<a class="headerlink" href="#booting-a-live-distribution" title="Permalink to this headline">¶</a></h2>
+<p><strong>todo:</strong> Debian live (build+install using <tt class="docutils literal"><span class="pre">live-build</span></tt>)</p>
+<p><strong>todo:</strong> Generic ISO image (where to place kernel+initrd and rootfs)</p>
+</div>
+<div class="section" id="creating-custom-netboot-images">
+<h2>Creating custom netboot images<a class="headerlink" href="#creating-custom-netboot-images" title="Permalink to this headline">¶</a></h2>
+<p><strong>todo</strong> write this</p>
+<div class="section" id="custom-live-images">
+<h3>Custom live images<a class="headerlink" href="#custom-live-images" title="Permalink to this headline">¶</a></h3>
+<p><strong>todo</strong> write this (mount root via nfs, use aufs, etc.)</p>
+</div>
+</div>
+</div>
+
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
+        var disqus_identifier = "sysadmin/debian-pxe-server";
+	var disqus_title = "Hackzine Wiki";
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Debian: installing a PXE server on Wheezy</a><ul>
+<li><a class="reference internal" href="#installing-tftp-server">Installing tftp server</a></li>
+<li><a class="reference internal" href="#configuring-the-dhcp-server">Configuring the DHCP server</a></li>
+<li><a class="reference internal" href="#adding-netboot-images-for-installers">Adding netboot images for installers</a></li>
+<li><a class="reference internal" href="#booting-multiple-images-from-the-same-pxe-server">Booting multiple images from the same PXE server</a><ul>
+<li><a class="reference internal" href="#adding-images-for-squeeze">Adding images for squeeze</a></li>
+<li><a class="reference internal" href="#adding-ubuntu-images">Adding ubuntu images</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#booting-a-live-distribution">Booting a live distribution</a></li>
+<li><a class="reference internal" href="#creating-custom-netboot-images">Creating custom netboot images</a><ul>
+<li><a class="reference internal" href="#custom-live-images">Custom live images</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="debian-no-install-recommended-packages.html"
+                        title="previous chapter">Debian: prevent installation of recommended packages</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="debian-regenerate-ssh-keys.html"
+                        title="next chapter">Debian: regenerate SSH keys</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/sysadmin/debian-pxe-server.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="debian-regenerate-ssh-keys.html" title="Debian: regenerate SSH keys"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="debian-no-install-recommended-packages.html" title="Debian: prevent installation of recommended packages"
+             >previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Samuele ~redShadow~ Santi.
+      Last updated on 2013-05-20 18:24:10 +0200.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
