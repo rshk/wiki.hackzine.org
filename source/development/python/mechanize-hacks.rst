@@ -1,10 +1,10 @@
 Python: Mechanize hacks
-####
+#######################
 
 Stuff about Python `mechanize`_ module.
 
 Forcing all connections to localhost
-====
+====================================
 
 This code snippet came from a script I wrote to perform some installation tasks on a web application, freshly installed on the machine.
 As the installation is usually fresh, can be the case that the DNS have not been properly refreshed, and so they're not returning the correct IP for the domain name, thus the script execution would fail.
