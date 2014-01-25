@@ -46,7 +46,6 @@ clean:
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-	@echo $(DOMAIN_NAME) > $(BUILDDIR)/html/CNAME
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
@@ -157,6 +156,7 @@ doctest:
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
 publish: html
+	@echo $(DOMAIN_NAME) > $(BUILDDIR)/html/CNAME
 	ghp-import -n -p ./build/html
 	@echo
 	@echo "HTML output published on github-pages"
