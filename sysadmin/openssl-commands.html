@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -60,15 +58,16 @@
 <h2>Creating own CA<a class="headerlink" href="#creating-own-ca" title="Permalink to this headline">¶</a></h2>
 <p>If we&#8217;re dealing with self-signed certificates (eg. for certificates used internally in an organization),
 we usually need to create our own Certification Authority:</p>
-<div class="highlight-python"><pre># Create the CA Key and Certificate for signing Client Certs
+<div class="highlight-python"><div class="highlight"><pre># Create the CA Key and Certificate for signing Client Certs
 openssl genrsa -des3 -out ca.key 4096
-openssl req -new -x509 -days 365 -key ca.key -out ca.crt</pre>
+openssl req -new -x509 -days 365 -key ca.key -out ca.crt
+</pre></div>
 </div>
 </div>
 <div class="section" id="create-a-server-key-and-certificate">
 <h2>Create a Server Key and Certificate<a class="headerlink" href="#create-a-server-key-and-certificate" title="Permalink to this headline">¶</a></h2>
 <p>For example, for web servers (remember to put the domain name in the CN field):</p>
-<div class="highlight-python"><pre># Create the Server Key, CSR, and Certificate
+<div class="highlight-python"><div class="highlight"><pre># Create the Server Key, CSR, and Certificate
 openssl genrsa -des3 -out server.key 4096
 openssl req -new -key server.key -out server.csr
 
@@ -85,18 +84,20 @@ openssl x509 -req -days 365 \
 
 # Remove the password from the key (needed when it will be used
 # automatically eg. from a web server).
-openssl rsa -in server.key -out server-np.key</pre>
+openssl rsa -in server.key -out server-np.key
+</pre></div>
 </div>
 </div>
 <div class="section" id="create-a-client-key">
 <h2>Create a Client Key<a class="headerlink" href="#create-a-client-key" title="Permalink to this headline">¶</a></h2>
 <p>Pretty much the same as with the server:</p>
-<div class="highlight-python"><pre>openssl genrsa -des3 -out server.key 4096
+<div class="highlight-python"><div class="highlight"><pre>openssl genrsa -des3 -out server.key 4096
 openssl req -new -key server.key -out server.csr
 
 openssl x509 -req -days 365 \
     -in server.csr -CA ca.crt -CAkey ca.key -CAserial ./caserial \
-    -CAcreateserial -out server.crt</pre>
+    -CAcreateserial -out server.crt
+</pre></div>
 </div>
 </div>
 <div class="section" id="useful-commands">
@@ -104,16 +105,20 @@ openssl x509 -req -days 365 \
 <div class="section" id="checking">
 <h3>Checking<a class="headerlink" href="#checking" title="Permalink to this headline">¶</a></h3>
 <p>Check a Certificate Signing Request (CSR):</p>
-<div class="highlight-python"><pre>openssl req -text -noout -verify -in CSR.csr</pre>
+<div class="highlight-python"><div class="highlight"><pre>openssl req -text -noout -verify -in CSR.csr
+</pre></div>
 </div>
 <p>Check a private key:</p>
-<div class="highlight-python"><pre>openssl rsa -in privateKey.key -check</pre>
+<div class="highlight-python"><div class="highlight"><pre>openssl rsa -in privateKey.key -check
+</pre></div>
 </div>
 <p>Check a certificate:</p>
-<div class="highlight-python"><pre>openssl x509 -in certificate.crt -text -noout</pre>
+<div class="highlight-python"><div class="highlight"><pre>openssl x509 -in certificate.crt -text -noout
+</pre></div>
 </div>
 <p>Check a PKCS#12 file (.pfx or .p12):</p>
-<div class="highlight-python"><pre>openssl pkcs12 -info -in keyStore.p12</pre>
+<div class="highlight-python"><div class="highlight"><pre>openssl pkcs12 -info -in keyStore.p12
+</pre></div>
 </div>
 </div>
 </div>
@@ -123,7 +128,7 @@ openssl x509 -req -days 365 \
 <h3>NGINX, with client-side certificate authentication<a class="headerlink" href="#nginx-with-client-side-certificate-authentication" title="Permalink to this headline">¶</a></h3>
 <p>This is a basic configuration I used for enforcing
 certificate authentication on NGINX:</p>
-<div class="highlight-python"><pre>server {
+<div class="highlight-python"><div class="highlight"><pre>server {
     listen 443;
     ssl on;
 
@@ -135,17 +140,19 @@ certificate authentication on NGINX:</p>
     ssl_verify_client on;
     ssl_verify_depth 2;
 
-    set $ssl_client_s_dn_cn "";
+    set $ssl_client_s_dn_cn &quot;&quot;;
 
     # Put your location directives here...
-}</pre>
+}
+</pre></div>
 </div>
 <p>You&#8217;ll also need PKSC12 certificate bundles to import in browsers:</p>
-<div class="highlight-python"><pre>openssl pkcs12 -export \
+<div class="highlight-python"><div class="highlight"><pre>openssl pkcs12 -export \
     -in client-s.crt -inkey client-s.key \
     -certfile ca.crt \
-    -name "Certificate for client X" \
-    -out client-s.p12</pre>
+    -name &quot;Certificate for client X&quot; \
+    -out client-s.p12
+</pre></div>
 </div>
 </div>
 </div>
@@ -246,8 +253,8 @@ certificate authentication on NGINX:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-11-02 19:33:46 +0100.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on 2014-01-25 14:07:35 +0100.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>

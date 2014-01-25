@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -59,19 +57,20 @@
 <p>Readline is known to have issues with color prompts, such as broken cursor
 position calculation, long lines self-overwriting, etc.</p>
 <p>In the readline info page:</p>
-<div class="highlight-python"><pre>-- Function: int rl_expand_prompt (char *prompt)
+<div class="highlight-python"><div class="highlight"><pre>-- Function: int rl_expand_prompt (char *prompt)
     Expand any special character sequences in PROMPT and set up the
     local Readline prompt redisplay variables.  This function is
-    called by `readline()'.  It may also be called to expand the
-    primary prompt if the `rl_on_new_line_with_prompt()' function or
-    `rl_already_prompted' variable is used.  It returns the number of
+    called by `readline()&#39;.  It may also be called to expand the
+    primary prompt if the `rl_on_new_line_with_prompt()&#39; function or
+    `rl_already_prompted&#39; variable is used.  It returns the number of
     visible characters on the last line of the (possibly multi-line)
     prompt.  Applications may indicate that the prompt contains
     characters that take up no physical screen space when displayed by
     bracketing a sequence of such characters with the special markers
-    `RL_PROMPT_START_IGNORE' and `RL_PROMPT_END_IGNORE' (declared in
-    `readline.h'.  This may be used to embed terminal-specific escape
-    sequences in prompts.</pre>
+    `RL_PROMPT_START_IGNORE&#39; and `RL_PROMPT_END_IGNORE&#39; (declared in
+    `readline.h&#39;.  This may be used to embed terminal-specific escape
+    sequences in prompts.
+</pre></div>
 </div>
 <p>that are defined as such in <tt class="docutils literal"><span class="pre">readline.h</span></tt>:</p>
 <div class="highlight-c"><div class="highlight"><pre><span class="cm">/* Definitions available for use by readline clients. */</span>
@@ -160,8 +159,8 @@ position calculation, long lines self-overwriting, etc.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-11-02 19:33:46 +0100.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on 2014-01-25 14:07:35 +0100.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>

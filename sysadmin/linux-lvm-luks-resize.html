@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Debian: VM cleanup after cloning &mdash; Hackzine Wiki</title>
+    <title>Linux: Resizing a LUKS volume on LVM &mdash; Hackzine Wiki</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Hackzine Wiki" href="../index.html" />
     <link rel="up" title="Sysadmin" href="index.html" />
-    <link rel="next" title="Debian: installation from chroot" href="debian-installation-from-chroot.html" />
-    <link rel="prev" title="Debian: archive repositories" href="debian-archive-repos.html" /> 
+    <link rel="next" title="Linux: dump NVIDIA card settings" href="linux-nvidia-dump-settings.html" />
+    <link rel="prev" title="Linux: getting e-mail notification on user login" href="linux-login-email-notification.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +36,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="debian-installation-from-chroot.html" title="Debian: installation from chroot"
+          <a href="linux-nvidia-dump-settings.html" title="Linux: dump NVIDIA card settings"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="debian-archive-repos.html" title="Debian: archive repositories"
+          <a href="linux-login-email-notification.html" title="Linux: getting e-mail notification on user login"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
@@ -52,40 +52,52 @@
           <div class="body">
             
 
-  <div class="section" id="debian-vm-cleanup-after-cloning">
-<h1>Debian: VM cleanup after cloning<a class="headerlink" href="#debian-vm-cleanup-after-cloning" title="Permalink to this headline">¶</a></h1>
-<p>After you clone a virtual machine, it will still contain some garbage
-from the previous installation that we want to clean up.</p>
-<p>To do so, I usually run the following commands. These are not only
-debian-specific, although some modifications might be necessary for other
-distributions.</p>
-<div class="section" id="remove-persistent-naming-udev-rules">
-<h2>Remove &#8220;persistent naming&#8221; udev rules<a class="headerlink" href="#remove-persistent-naming-udev-rules" title="Permalink to this headline">¶</a></h2>
-<p>These are created to uiniquely associate device names, by serial number or so,
-and are responsible for things like your first vm network card being named
-<tt class="docutils literal"><span class="pre">eth1</span></tt> etc. So, just remove them:</p>
-<div class="highlight-python"><div class="highlight"><pre>rm /etc/udev/rules.d/70-persistent-*.rules
+  <div class="section" id="linux-resizing-a-luks-volume-on-lvm">
+<h1>Linux: Resizing a LUKS volume on LVM<a class="headerlink" href="#linux-resizing-a-luks-volume-on-lvm" title="Permalink to this headline">¶</a></h1>
+<p>I have the following partitioning layout:</p>
+<div class="highlight-python"><div class="highlight"><pre>                +---------------+
+                |     ext4      |
++---------------+---------------+
+|     ext4      |     LUKS      |
++---------------+---------------+
+|     LV-0      |     LV-1      |
++---------------+---------------+----- ... --+
+|             VG-0                           |
++------------------------------------- ... --+
+|             PV-0                           |
++------------------------------------- ... --+
 </pre></div>
 </div>
-</div>
-<div class="section" id="clean-up-the-bash-history">
-<h2>Clean up the bash history<a class="headerlink" href="#clean-up-the-bash-history" title="Permalink to this headline">¶</a></h2>
-<p>Usually, only the history for root will be &#8220;dirty&#8221; (although you can
-avoid writing it in the template by setting <tt class="docutils literal"><span class="pre">HISTFILE=</span></tt> in the terminal
-you use for administration tasks).</p>
-<p>To clean up the bash history for all the users in the system, you can use this:</p>
-<div class="highlight-python"><div class="highlight"><pre>cat /etc/passwd | cut -d: -f6 | sed &#39;s@$@/.bash_history@&#39; | xargs -d &#39;\n&#39; rm -fv
+<p>Now, I need to extend the two ext4 filesystems, to get
+some more space.</p>
+<div class="section" id="resizing-ext4-on-lvm">
+<h2>Resizing ext4 on LVM<a class="headerlink" href="#resizing-ext4-on-lvm" title="Permalink to this headline">¶</a></h2>
+<p>The first one is easy:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> lvextend -L +50G -r /dev/VG-0/LV-0
 </pre></div>
 </div>
+<p>Will add 50GB to the volume and resize the contained
+filesystem. It works even when the filesystem is mounted.</p>
 </div>
-<div class="section" id="regenerate-ssh-keys">
-<h2>Regenerate SSH keys<a class="headerlink" href="#regenerate-ssh-keys" title="Permalink to this headline">¶</a></h2>
-<p>To rebuild the SSH keys of this machine, in order to avoid having the same
-key used amongst many machines:</p>
-<div class="highlight-python"><div class="highlight"><pre>rm -fv /etc/ssh/ssh_host_*
-dpkg-reconfigure openssh-server
+<div class="section" id="resizing-ext4-on-luks-on-lvm">
+<h2>Resizing ext4 on LUKS on LVM<a class="headerlink" href="#resizing-ext4-on-luks-on-lvm" title="Permalink to this headline">¶</a></h2>
+<p>The next one is trickier, as LVM doesn&#8217;t automatically
+support resizing.</p>
+<p><strong>Step 1:</strong> resize the logical volume:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> lvextend -L +50G /dev/VG-0/LV-1
 </pre></div>
 </div>
+<p><strong>Step 2:</strong> open the LUKS volume:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> cryptsetup luksOpen /dev/VG-0/LV-1 crypt_LV-1
+</pre></div>
+</div>
+<p><strong>Step 3:</strong> resize the inner filesytem (extend to fit space):</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> e2fsck -f /dev/mapper/crypt_LV-1
+<span class="gp">#</span> resize2fs /dev/mapper/crypt_LV-1
+</pre></div>
+</div>
+<p>(the <tt class="docutils literal"><span class="pre">e2fsck</span></tt> is a good practice, and it is enforced
+by <tt class="docutils literal"><span class="pre">resize2fs</span></tt> anyways..)</p>
 </div>
 </div>
 
@@ -94,7 +106,7 @@ dpkg-reconfigure openssh-server
     <script type="text/javascript">
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
-        var disqus_identifier = "sysadmin/debian-clean-vm-after-clone";
+        var disqus_identifier = "sysadmin/linux-lvm-luks-resize";
 	var disqus_title = "Hackzine Wiki";
 
         /* * * DON'T EDIT BELOW THIS LINE * * */
@@ -114,23 +126,22 @@ dpkg-reconfigure openssh-server
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Debian: VM cleanup after cloning</a><ul>
-<li><a class="reference internal" href="#remove-persistent-naming-udev-rules">Remove &#8220;persistent naming&#8221; udev rules</a></li>
-<li><a class="reference internal" href="#clean-up-the-bash-history">Clean up the bash history</a></li>
-<li><a class="reference internal" href="#regenerate-ssh-keys">Regenerate SSH keys</a></li>
+<li><a class="reference internal" href="#">Linux: Resizing a LUKS volume on LVM</a><ul>
+<li><a class="reference internal" href="#resizing-ext4-on-lvm">Resizing ext4 on LVM</a></li>
+<li><a class="reference internal" href="#resizing-ext4-on-luks-on-lvm">Resizing ext4 on LUKS on LVM</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="debian-archive-repos.html"
-                        title="previous chapter">Debian: archive repositories</a></p>
+  <p class="topless"><a href="linux-login-email-notification.html"
+                        title="previous chapter">Linux: getting e-mail notification on user login</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="debian-installation-from-chroot.html"
-                        title="next chapter">Debian: installation from chroot</a></p>
+  <p class="topless"><a href="linux-nvidia-dump-settings.html"
+                        title="next chapter">Linux: dump NVIDIA card settings</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/sysadmin/debian-clean-vm-after-clone.txt"
+    <li><a href="../_sources/sysadmin/linux-lvm-luks-resize.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -157,10 +168,10 @@ dpkg-reconfigure openssh-server
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="debian-installation-from-chroot.html" title="Debian: installation from chroot"
+          <a href="linux-nvidia-dump-settings.html" title="Linux: dump NVIDIA card settings"
              >next</a> |</li>
         <li class="right" >
-          <a href="debian-archive-repos.html" title="Debian: archive repositories"
+          <a href="linux-login-email-notification.html" title="Linux: getting e-mail notification on user login"
              >previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
@@ -168,7 +179,7 @@ dpkg-reconfigure openssh-server
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2014-01-25 14:07:35 +0100.
+      Last updated on 2014-01-25 14:10:27 +0100.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>

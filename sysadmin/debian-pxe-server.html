@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -59,7 +57,8 @@
 <div class="section" id="installing-tftp-server">
 <h2>Installing tftp server<a class="headerlink" href="#installing-tftp-server" title="Permalink to this headline">¶</a></h2>
 <p>First, install the TFTP server:</p>
-<div class="highlight-python"><pre>apt-get install tftpd-hpa</pre>
+<div class="highlight-python"><div class="highlight"><pre>apt-get install tftpd-hpa
+</pre></div>
 </div>
 <p>Default configuration should be OK:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># cat /etc/default/tftpd-hpa</span>
@@ -80,14 +79,14 @@
 <p class="last">You&#8217;ll have to use a decent dhcp server, like a linux box or a cisco,
 those plastic things you buy at the supermarket usually don&#8217;t fit, sorry.</p>
 </div>
-<div class="highlight-python"><pre>allow booting;
+<div class="highlight-python"><div class="highlight"><pre>allow booting;
 allow bootp;
 
 
 ## Configuration for the lan
 subnet 192.168.0.0 netmask 255.255.0.0 {
   option routers 192.168.1.1;
-  filename "pxelinux.0";
+  filename &quot;pxelinux.0&quot;;
   option broadcast-address 192.168.255.255;
   next-server 192.168.1.2;
 
@@ -104,7 +103,8 @@ subnet 192.168.0.0 netmask 255.255.0.0 {
     range dynamic-bootp 192.168.1.1 192.168.10.254;
     deny unknown-clients;
   }
-}</pre>
+}
+</pre></div>
 </div>
 <p>In short, you have to add the <tt class="docutils literal"><span class="pre">allow</span> <span class="pre">booting</span></tt> and <tt class="docutils literal"><span class="pre">allow</span> <span class="pre">bootp</span></tt>
 directives, specify the <tt class="docutils literal"><span class="pre">filename</span></tt> in the pool and add <tt class="docutils literal"><span class="pre">dynamic-bootp</span></tt>
@@ -145,13 +145,14 @@ rm pxelinux.cfg
 mkdir pxelinux.cfg</div></blockquote>
 <p>Also, copy <tt class="docutils literal"><span class="pre">debian-installer/amd64/boot-screens/vesamenu.c32</span></tt> to
 the <tt class="docutils literal"><span class="pre">/srv/tftp</span></tt> folder, as we will need it later:</p>
-<div class="highlight-python"><pre>cp debian-installer/amd64/boot-screens/vesamenu.c32 .</pre>
+<div class="highlight-python"><div class="highlight"><pre>cp debian-installer/amd64/boot-screens/vesamenu.c32 .
+</pre></div>
 </div>
 <p>You can either keep the symlink to <tt class="docutils literal"><span class="pre">pxelinux.0</span></tt> or copy it over,
 it doesn&#8217;t matter.</p>
 <p>Then, create the following files:</p>
 <p>pxelinux.cfg/default:</p>
-<div class="highlight-python"><pre>default vesamenu.c32
+<div class="highlight-python"><div class="highlight"><pre>default vesamenu.c32
 prompt 0
 timeout 0
 
@@ -161,10 +162,11 @@ menu include pxelinux.cfg/graphics.conf
 label Install Debian Wheezy amd64
       menu label ^Debian Wheezy amd64
       kernel vesamenu.c32
-      append debian-installer/amd64/boot-screens/menu.cfg</pre>
+      append debian-installer/amd64/boot-screens/menu.cfg
+</pre></div>
 </div>
 <p>pxelinux.cfg/graphics.conf:</p>
-<div class="highlight-python"><pre>menu background     #ff000000
+<div class="highlight-python"><div class="highlight"><pre>menu background     #ff000000
 menu color background   0   * #ff000000 *
 menu color title    1;33    #ffffff00 * *
 menu color border   32  #ff008800 * *
@@ -191,7 +193,8 @@ menu passwordmargin 26
 menu passwordrow 12
 
 noescape 1
-allowoptions 0</pre>
+allowoptions 0
+</pre></div>
 </div>
 <p>While not strictly necessary, the latter will provide some nice theming
 of the menu. Yo can specify a bunch of customizations, have a look at
@@ -206,10 +209,11 @@ the boot menu:</p>
 wget <a class="reference external" href="http://ftp.debian.org/debian/dists/wheezy/main/installer-i386/current/images/netboot/netboot.tar.gz">http://ftp.debian.org/debian/dists/wheezy/main/installer-i386/current/images/netboot/netboot.tar.gz</a> -O wheezy-i386.tar.gz
 tar xzvf wheezy-i386.tar.gz ./debian-installer/</div></blockquote>
 <p>add to <tt class="docutils literal"><span class="pre">pxelinux.cfg/default</span></tt>:</p>
-<div class="highlight-python"><pre>label Install Debian Wheezy i386
+<div class="highlight-python"><div class="highlight"><pre>label Install Debian Wheezy i386
       menu label ^Debian Wheezy i386
       kernel vesamenu.c32
-      append debian-installer/i386/boot-screens/menu.cfg</pre>
+      append debian-installer/i386/boot-screens/menu.cfg
+</pre></div>
 </div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -222,18 +226,20 @@ other things, such as pxelinux.0 and pxelinux.cfg!</p>
 customize things further, as the contents of both installers are named
 the same.</p>
 <p>For example:</p>
-<div class="highlight-python"><pre>cd /tmp
+<div class="highlight-python"><div class="highlight"><pre>cd /tmp
 wget http://ftp.debian.org/debian/dists/squeeze/main/installer-amd64/current/images/netboot/netboot.tar.gz -O squeeze-amd64.tar.gz
 tar xzvf squeeze-amd64.tar.gz ./debian-installer/
-find debian-installer/ -type f -print0 | xargs -0 sed "s,debian-installer/,debian-installer/squeeze/," -i
+find debian-installer/ -type f -print0 | xargs -0 sed &quot;s,debian-installer/,debian-installer/squeeze/,&quot; -i
 mkdir -p /srv/tftp/debian-installer/squeeze/
-mv debian-installer/amd64 /srv/tftp/debian-installer/squeeze/</pre>
+mv debian-installer/amd64 /srv/tftp/debian-installer/squeeze/
+</pre></div>
 </div>
 <p>add to <tt class="docutils literal"><span class="pre">pxelinux.cfg/default</span></tt>:</p>
-<div class="highlight-python"><pre>label Install Debian Squeeze amd64
+<div class="highlight-python"><div class="highlight"><pre>label Install Debian Squeeze amd64
       menu label ^Debian Squeeze amd64
       kernel vesamenu.c32
-      append debian-installer/squeeze/amd64/boot-screens/menu.cfg</pre>
+      append debian-installer/squeeze/amd64/boot-screens/menu.cfg
+</pre></div>
 </div>
 </div>
 <div class="section" id="adding-ubuntu-images">
@@ -291,10 +297,11 @@ eg. <tt class="docutils literal"><span class="pre">pxelinux.cfg/ubuntu-install.c
 </pre></div>
 </div>
 <p>and link it from <tt class="docutils literal"><span class="pre">pxelinux.cfg/default</span></tt>:</p>
-<div class="highlight-python"><pre>label ubuntu_install
+<div class="highlight-python"><div class="highlight"><pre>label ubuntu_install
       menu label ^Ubuntu Installers
       kernel vesamenu.c32
-      append pxelinux.cfg/ubuntu-install.cfg</pre>
+      append pxelinux.cfg/ubuntu-install.cfg
+</pre></div>
 </div>
 <p><strong>todo</strong> write some helper application to install images to appropriate places.
 It would be nice to have something, working at least for netboot images
@@ -405,8 +412,8 @@ of  the major distributions, plus some common live.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-11-02 19:33:46 +0100.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on 2014-01-25 14:07:35 +0100.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>

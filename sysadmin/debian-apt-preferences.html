@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -60,15 +58,17 @@
 <h2>Install some packages from testing<a class="headerlink" href="#install-some-packages-from-testing" title="Permalink to this headline">¶</a></h2>
 <p>From: <a class="reference external" href="http://stackoverflow.com/questions/512906">http://stackoverflow.com/questions/512906</a></p>
 <p>Add the following to <tt class="docutils literal"><span class="pre">/etc/apt/preferences</span></tt>:</p>
-<div class="highlight-python"><pre>Package: *
+<div class="highlight-python"><div class="highlight"><pre>Package: *
 Pin: release a=testing
-Pin-Priority: 200</pre>
+Pin-Priority: 200
+</pre></div>
 </div>
 <p><tt class="docutils literal"><span class="pre">200</span></tt> means that new packages in testing still override local packages that
 are not in stable (local is always <tt class="docutils literal"><span class="pre">100</span></tt>), but not ones that are in the stable
 repo as well.</p>
 <p>To install packages from testing:</p>
-<div class="highlight-python"><pre>$ apt-get install -t testing &lt;some_package&gt;</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ apt-get install -t testing &lt;some_package&gt;
+</pre></div>
 </div>
 </div>
 </div>
@@ -150,8 +150,8 @@ repo as well.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-11-02 19:33:46 +0100.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on 2014-01-25 14:07:35 +0100.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>

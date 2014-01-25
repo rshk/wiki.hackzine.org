@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -74,7 +72,7 @@
 <p>Do as above, but connect to the serial port <strong>before</strong> powering up the plug.
 Then, as soon as you see serial output, press a key to interrupt normal
 boot and access the U-Boot console:</p>
-<div class="highlight-python"><pre>U-Boot 2009.11-rc1-00602-g28a9c08-dirty (Feb 09 2010 - 18:15:21)
+<div class="highlight-python"><div class="highlight"><pre>U-Boot 2009.11-rc1-00602-g28a9c08-dirty (Feb 09 2010 - 18:15:21)
 Marvell-Plug2L
 
 SoC:   Kirkwood 88F6281_A0
@@ -87,7 +85,8 @@ Net:   egiga0, egiga1
 88E1121 Initialized on egiga0
 88E1121 Initialized on egiga1
 Hit any key to stop autoboot:  0
-Marvell&gt;&gt;</pre>
+Marvell&gt;&gt;
+</pre></div>
 </div>
 </div>
 </div>
@@ -134,7 +133,7 @@ running on a usbkey</p>
 <div class="section" id="copy-to-flash">
 <h3>Copy to flash<a class="headerlink" href="#copy-to-flash" title="Permalink to this headline">¶</a></h3>
 <p><strong>Step 1</strong> Flash the kernel from the usb stick on the NAND:</p>
-<div class="highlight-python"><pre>usb start
+<div class="highlight-python"><div class="highlight"><pre>usb start
 ext2load usb 0:1 0x2000000 /uImage
 iminfo
 nand erase 0x100000 0x400000
@@ -143,47 +142,52 @@ nand write 0x2000000 0x100000 0x400000
 setenv mainlineLinux yes
 setenv arcNumber 2097
 saveenv
-reset</pre>
+reset
+</pre></div>
 </div>
 <p><strong>Step 2</strong> Boot from the usb stick:</p>
-<div class="highlight-python"><pre>setenv bootargs_console console=ttyS0,115200
-setenv bootcmd_usb 'usb start; ext2load usb 0:1 0x00800000 /uImage; ext2load usb 0:1 0x01100000 /uInitrd'
-setenv bootcmd 'setenv bootargs $(bootargs_console); run bootcmd_usb; bootm 0x00800000 0x01100000'
+<div class="highlight-python"><div class="highlight"><pre>setenv bootargs_console console=ttyS0,115200
+setenv bootcmd_usb &#39;usb start; ext2load usb 0:1 0x00800000 /uImage; ext2load usb 0:1 0x01100000 /uInitrd&#39;
+setenv bootcmd &#39;setenv bootargs $(bootargs_console); run bootcmd_usb; bootm 0x00800000 0x01100000&#39;
 saveenv
-run bootcmd</pre>
+run bootcmd
+</pre></div>
 </div>
 <p><strong>Step 3</strong> Clone USB rootfs to internal flash</p>
 <p>When we make the copy, we don&#8217;t want mounted filesystems (dev, tmpfs and so on), though do want anything under any mount points (e.g. /dev/console is always handy), so bind-mount / somewhere, and copy that.</p>
-<div class="highlight-python"><pre>mkdir /tmp/rootfs
+<div class="highlight-python"><div class="highlight"><pre>mkdir /tmp/rootfs
 mount -o bind / /tmp/rootfs/
 cd /tmp/rootfs
 sync
-cp -av . /mnt/</pre>
+cp -av . /mnt/
+</pre></div>
 </div>
 <p>Fix the fstab in /mnt/etc/fstab:</p>
-<div class="highlight-python"><pre>/dev/root  /               ubifs   defaults,noatime,rw                      0 0
+<div class="highlight-python"><div class="highlight"><pre>/dev/root  /               ubifs   defaults,noatime,rw                      0 0
 tmpfs      /var/run        tmpfs   size=1M,rw,nosuid,mode=0755              0 0
 tmpfs      /var/lock       tmpfs   size=1M,rw,noexec,nosuid,nodev,mode=1777 0 0
-tmpfs      /tmp            tmpfs   defaults,nosuid,nodev                    0 0</pre>
+tmpfs      /tmp            tmpfs   defaults,nosuid,nodev                    0 0
+</pre></div>
 </div>
 <p>After that, reboot and re-enter the uBoot console. Also, detach the USB stick to make sure we are booting from flash.</p>
 <p><strong>Step 4</strong> Restore boot process from internal flash</p>
 <p>To boot from the NAND again after copying the rootfs to NAND, I used these commands at the uBoot prompt:</p>
-<div class="highlight-python"><pre>setenv x_bootcmd_usb 'usb start'
-setenv x_bootcmd_kernel 'nand read.e 0x6400000 0x100000 0x400000'
-setenv x_bootargs_root 'ubi.mtd=2 root=ubi0:rootfs rootfstype=ubifs'
-setenv x_bootargs 'console=ttyS0,115200'
-setenv x_bootcmd '$(x_bootcmd_usb); $(x_bootcmd_kernel); setenv bootargs $(x_bootargs) $(x_bootargs_root) ;bootm 0x6400000;'
-setenv bootcmd 'run x_bootcmd'
+<div class="highlight-python"><div class="highlight"><pre>setenv x_bootcmd_usb &#39;usb start&#39;
+setenv x_bootcmd_kernel &#39;nand read.e 0x6400000 0x100000 0x400000&#39;
+setenv x_bootargs_root &#39;ubi.mtd=2 root=ubi0:rootfs rootfstype=ubifs&#39;
+setenv x_bootargs &#39;console=ttyS0,115200&#39;
+setenv x_bootcmd &#39;$(x_bootcmd_usb); $(x_bootcmd_kernel); setenv bootargs $(x_bootargs) $(x_bootargs_root) ;bootm 0x6400000;&#39;
+setenv bootcmd &#39;run x_bootcmd&#39;
 saveenv
-reset</pre>
+reset
+</pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="kernel-upgrade">
 <h2>Kernel upgrade<a class="headerlink" href="#kernel-upgrade" title="Permalink to this headline">¶</a></h2>
 <p>I recently had an issue during a kernel upgrade (3.2.0-2-kirkwood): dpkg was getting stuck after this:</p>
-<div class="highlight-python"><pre># dpkg --configure -a
+<div class="highlight-python"><div class="highlight"><pre># dpkg --configure -a
 Setting up linux-image-3.2.0-2-kirkwood (3.2.15-1) ...
 Running depmod.
 Examining /etc/kernel/postinst.d.
@@ -191,17 +195,20 @@ run-parts: executing /etc/kernel/postinst.d/initramfs-tools 3.2.0-2-kirkwood /bo
 update-initramfs: Generating /boot/initrd.img-3.2.0-2-kirkwood
 Warning: root device /dev/root does not exist
 
-Press Ctrl-C to abort build, or Enter to continue</pre>
+Press Ctrl-C to abort build, or Enter to continue
+</pre></div>
 </div>
 <p>I pressed Enter but nothing happened for a quite long time.</p>
 <p>The process that got stuck is:</p>
-<div class="highlight-python"><pre>/usr/sbin/mkinitramfs -v -o /boot/initrd.img-3.2.0-2-kirkwood.new 3.2.0-2-kirkwood</pre>
+<div class="highlight-python"><div class="highlight"><pre>/usr/sbin/mkinitramfs -v -o /boot/initrd.img-3.2.0-2-kirkwood.new 3.2.0-2-kirkwood
+</pre></div>
 </div>
 <p>but was running just fine when launched manually. To investigate further I tried this:</p>
-<div class="highlight-python"><pre>mv /usr/sbin/mkinitramfs /usr/sbin/mkinitramfs_orig
-echo -e '#!/bin/sh\n/usr/sbin/mkinitramfs_orig -v "$@"' &gt; /usr/sbin/mkinitramfs
+<div class="highlight-python"><div class="highlight"><pre>mv /usr/sbin/mkinitramfs /usr/sbin/mkinitramfs_orig
+echo -e &#39;#!/bin/sh\n/usr/sbin/mkinitramfs_orig -v &quot;$@&quot;&#39; &gt; /usr/sbin/mkinitramfs
 chmod +x /usr/sbin/mkinitramfs
-dpkg --configure -a</pre>
+dpkg --configure -a
+</pre></div>
 </div>
 <p>but still, the process was getting stuck for no apparent reason.</p>
 <p>At last, I solved by fixing the &#8220;/dev/root does not exist&#8221; thing using this:</p>
@@ -209,7 +216,7 @@ dpkg --configure -a</pre>
 </pre></div>
 </div>
 <p>After that, the upgrade just went fine:</p>
-<div class="highlight-python"><pre># dpkg --configure -a
+<div class="highlight-python"><div class="highlight"><pre># dpkg --configure -a
 Setting up linux-image-3.2.0-2-kirkwood (3.2.15-1) ...
 Running depmod.
 Examining /etc/kernel/postinst.d.
@@ -229,7 +236,8 @@ Taking backup of uImage.
 Installing new uImage.
 Generating initramfs u-boot image... done.
 Taking backup of uInitrd.
-Installing new uInitrd.</pre>
+Installing new uInitrd.
+</pre></div>
 </div>
 </div>
 </div>
@@ -321,8 +329,8 @@ Installing new uInitrd.</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-11-02 19:33:46 +0100.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on 2014-01-25 14:07:35 +0100.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>

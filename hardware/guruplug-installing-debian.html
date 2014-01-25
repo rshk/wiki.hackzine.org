@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -110,26 +108,30 @@ Therefore, if you&#8217;re using a MMC/SD card, make sure to follow the
 instructions for USB devices and not for MMC/SD.</p>
 </div>
 <p><strong>USB:</strong> If you stored the installer on a USB stick, please use:</p>
-<div class="highlight-python"><pre>usb start
+<div class="highlight-python"><div class="highlight"><pre>usb start
 fatload usb 0:1 0x00800000 /uImage
-fatload usb 0:1 0x01100000 /uInitrd</pre>
+fatload usb 0:1 0x01100000 /uInitrd
+</pre></div>
 </div>
 <p><strong>SD card:</strong> for MMC/SD cards, use:</p>
-<div class="highlight-python"><pre>mmc init
+<div class="highlight-python"><div class="highlight"><pre>mmc init
 fatload mmc 0:1 0x00800000 /uImage
-fatload mmc 0:1 0x01100000 /uInitrd</pre>
+fatload mmc 0:1 0x01100000 /uInitrd
+</pre></div>
 </div>
 <p><strong>TFTP:</strong> if you want to load the installer via the network from a TFTP server,
 use this:</p>
-<div class="highlight-python"><pre>setenv serverip 192.168.1.2
+<div class="highlight-python"><div class="highlight"><pre>setenv serverip 192.168.1.2
 setenv ipaddr 192.168.1.147
 tftpboot 0x00800000 uImage
-tftpboot 0x01100000 uInitrd</pre>
+tftpboot 0x01100000 uInitrd
+</pre></div>
 </div>
 <p>Of course, you have to replace 192.168.1.2 with the IP address of your TFTP server.</p>
 <p>Finally, start the installer:</p>
-<div class="highlight-python"><pre>setenv bootargs console=ttyS0,115200n8 base-installer/initramfs-tools/driver-policy=most
-bootm 0x00800000 0x01100000</pre>
+<div class="highlight-python"><div class="highlight"><pre>setenv bootargs console=ttyS0,115200n8 base-installer/initramfs-tools/driver-policy=most
+bootm 0x00800000 0x01100000
+</pre></div>
 </div>
 </div>
 <div class="section" id="the-installation">
@@ -145,22 +147,25 @@ If you want to choose a different layout, make sure that you create a small
 automatically boot Debian.
 Interrupt the boot process of u-boot and enter the following commands.</p>
 <p>For <strong>USB</strong>, use this:</p>
-<div class="highlight-python"><pre>setenv bootargs_console console=ttyS0,115200
-setenv bootcmd_usb 'usb start; ext2load usb 0:1 0x00800000 /uImage; ext2load usb 0:1 0x01100000 /uInitrd'
-setenv bootcmd 'setenv bootargs $(bootargs_console); run bootcmd_usb; bootm 0x00800000 0x01100000'
-saveenv</pre>
+<div class="highlight-python"><div class="highlight"><pre>setenv bootargs_console console=ttyS0,115200
+setenv bootcmd_usb &#39;usb start; ext2load usb 0:1 0x00800000 /uImage; ext2load usb 0:1 0x01100000 /uInitrd&#39;
+setenv bootcmd &#39;setenv bootargs $(bootargs_console); run bootcmd_usb; bootm 0x00800000 0x01100000&#39;
+saveenv
+</pre></div>
 </div>
 <p>If you&#8217;re using an <strong>SD card</strong>, use these commands instead:</p>
-<div class="highlight-python"><pre>setenv bootargs_console console=ttyS0,115200
-setenv bootcmd_mmc 'mmc init; ext2load mmc 0:1 0x00800000 /uImage; ext2load mmc 0:1 0x01100000 /uInitrd'
-setenv bootcmd 'setenv bootargs $(bootargs_console); run bootcmd_mmc; bootm 0x00800000 0x01100000'
-saveenv</pre>
+<div class="highlight-python"><div class="highlight"><pre>setenv bootargs_console console=ttyS0,115200
+setenv bootcmd_mmc &#39;mmc init; ext2load mmc 0:1 0x00800000 /uImage; ext2load mmc 0:1 0x01100000 /uInitrd&#39;
+setenv bootcmd &#39;setenv bootargs $(bootargs_console); run bootcmd_mmc; bootm 0x00800000 0x01100000&#39;
+saveenv
+</pre></div>
 </div>
 <p>Finally, use these commands to boot from <strong>eSATA</strong>:</p>
-<div class="highlight-python"><pre>setenv bootargs_console console=ttyS0,115200
-setenv bootcmd_sata 'ide reset; ext2load ide 0:1 0x00800000 /uImage; ext2load ide 0:1 0x01100000 /uInitrd'
-setenv bootcmd 'setenv bootargs $(bootargs_console); run bootcmd_sata; bootm 0x00800000 0x01100000'
-saveenv</pre>
+<div class="highlight-python"><div class="highlight"><pre>setenv bootargs_console console=ttyS0,115200
+setenv bootcmd_sata &#39;ide reset; ext2load ide 0:1 0x00800000 /uImage; ext2load ide 0:1 0x01100000 /uInitrd&#39;
+setenv bootcmd &#39;setenv bootargs $(bootargs_console); run bootcmd_sata; bootm 0x00800000 0x01100000&#39;
+saveenv
+</pre></div>
 </div>
 <p>The commands above use 0:1 to refer to your boot partition.
 This indicates device 0 and partition 1.
@@ -171,7 +176,8 @@ case your device does not boot with 0:1.</p>
 <p>Your plug computer is now ready to boot Debian from USB, SD or eSATA and it
 will automatically do so whenever you turn on the plug computer.</p>
 <p>You can now type the following command to boot:</p>
-<div class="highlight-python"><pre>run bootcmd</pre>
+<div class="highlight-python"><div class="highlight"><pre>run bootcmd
+</pre></div>
 </div>
 <p>Go back to my <a class="reference external" href="http://www.cyrius.com/debian/kirkwood/sheevaplug/index.html">Debian on Plug Computer</a> page.</p>
 </div>
@@ -257,8 +263,8 @@ will automatically do so whenever you turn on the plug computer.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-11-02 19:33:46 +0100.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on 2014-01-25 14:07:35 +0100.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>

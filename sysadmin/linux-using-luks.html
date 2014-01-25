@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -61,14 +59,15 @@
 using LUKS.</p>
 <div class="section" id="the-commands">
 <h2>The commands<a class="headerlink" href="#the-commands" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><pre>fdisk /dev/sdx
+<div class="highlight-python"><div class="highlight"><pre>fdisk /dev/sdx
 cryptsetup -y --cipher aes-cbc-essiv:sha256 --key-size 256 luksFormat /dev/sdx1
 cryptsetup luksOpen /dev/sdx1 crypt_sdx1
 mkfs.ext3 -m 0 -j -O dir_index,filetype,sparse_super /dev/mapper/crypt_sdx1
 tune2fs -m 0 -c 0 -i 0 -L label /dev/mapper/crypt_sdx1
 mount /dev/mapper/crypt_sdx1 /mnt/crypt_sdx1
 umount /dev/mapper/crypt_sdx1
-cryptsetup luksClose crypt_sdx1</pre>
+cryptsetup luksClose crypt_sdx1
+</pre></div>
 </div>
 </div>
 <div class="section" id="commands-explained">
@@ -77,11 +76,11 @@ cryptsetup luksClose crypt_sdx1</pre>
 not really more. But I promise I will write a full guide one day..
 I wrote this just as a reminder.</p>
 <p>First of all, setup the partitioning using fdisk:</p>
-<div class="highlight-python"><pre># fdisk /dev/sdx
+<div class="highlight-python"><div class="highlight"><pre># fdisk /dev/sdx
 Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel
 Building a new DOS disklabel with disk identifier 0x87cd9031.
 Changes will remain in memory only, until you decide to write them.
-After that, of course, the previous content won't be recoverable.
+After that, of course, the previous content won&#39;t be recoverable.
 
 
 The number of cylinders for this disk is set to 182401.
@@ -104,7 +103,7 @@ Disk identifier: 0x87cd9031
 Command (m for help): o
 Building a new DOS disklabel with disk identifier 0x84732589.
 Changes will remain in memory only, until you decide to write them.
-After that, of course, the previous content won't be recoverable.
+After that, of course, the previous content won&#39;t be recoverable.
 
 
 The number of cylinders for this disk is set to 182401.
@@ -138,11 +137,12 @@ Command (m for help): w
 The partition table has been altered!
 
 Calling ioctl() to re-read partition table.
-Syncing disks.</pre>
+Syncing disks.
+</pre></div>
 </div>
 <p>Once the partitioning is done, we proceed setting up the encryption for the
 selected partition:</p>
-<div class="highlight-python"><pre># cryptsetup -y --cipher aes-cbc-essiv:sha256 --key-size 256 luksFormat /dev/sdx1
+<div class="highlight-python"><div class="highlight"><pre># cryptsetup -y --cipher aes-cbc-essiv:sha256 --key-size 256 luksFormat /dev/sdx1
 WARNING!
 ========
 This will overwrite data on /dev/sdx1 irrevocably.
@@ -150,16 +150,18 @@ This will overwrite data on /dev/sdx1 irrevocably.
 Are you sure? (Type uppercase yes): YES
 Enter LUKS passphrase:
 Verify passphrase:
-Command successful.</pre>
+Command successful.
+</pre></div>
 </div>
 <p>Decrypt the partition to use it as a normal device:</p>
-<div class="highlight-python"><pre># cryptsetup luksOpen /dev/sdx1 crypt_sdx1
+<div class="highlight-python"><div class="highlight"><pre># cryptsetup luksOpen /dev/sdx1 crypt_sdx1
 Enter LUKS passphrase:
 key slot 0 unlocked.
-Command successful.</pre>
+Command successful.
+</pre></div>
 </div>
 <p>Create an ext3 filesystem on the partition:</p>
-<div class="highlight-python"><pre># mkfs.ext3 -m 0 -j -O dir_index,filetype,sparse_super /dev/mapper/crypt_sdx1
+<div class="highlight-python"><div class="highlight"><pre># mkfs.ext3 -m 0 -j -O dir_index,filetype,sparse_super /dev/mapper/crypt_sdx1
 mke2fs 1.41.9 (22-Aug-2009)
 Filesystem label=
 OS type: Linux
@@ -182,15 +184,17 @@ Creating journal (32768 blocks): done
 Writing superblocks and filesystem accounting information: done
 
 This filesystem will be automatically checked every 20 mounts or
-180 days, whichever comes first.  Use tune2fs -c or -i to override.</pre>
+180 days, whichever comes first.  Use tune2fs -c or -i to override.
+</pre></div>
 </div>
 <p>I usually change some options on the filesystem, such as disable automatick
 fsck and remove reserved blocks for non-root filesystems:</p>
-<div class="highlight-python"><pre># tune2fs -m 0 -c 0 -i 0 -L label /dev/mapper/crypt_sdx1
+<div class="highlight-python"><div class="highlight"><pre># tune2fs -m 0 -c 0 -i 0 -L label /dev/mapper/crypt_sdx1
 tune2fs 1.41.9 (22-Aug-2009)
 Setting maximal mount count to -1
 Setting interval between checks to 0 seconds
-Setting reserved blocks percentage to 0% (0 blocks)</pre>
+Setting reserved blocks percentage to 0% (0 blocks)
+</pre></div>
 </div>
 <p>Mount the filesystem somewhere:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># mount /dev/mapper/crypt_sdXN /mnt/crypt_sdx1</span>
@@ -282,8 +286,8 @@ Setting reserved blocks percentage to 0% (0 blocks)</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Samuele ~redShadow~ Santi.
-      Last updated on 2013-11-02 19:33:46 +0100.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Last updated on 2014-01-25 14:07:35 +0100.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
 </html>
