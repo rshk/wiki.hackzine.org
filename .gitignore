@@ -4,3 +4,4 @@
 !/build/.keep
 /moin-data
 /.idea
+/.venv*
