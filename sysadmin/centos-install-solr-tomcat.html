@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CentOS: Install Solr with Tomcat6 &mdash; Hackzine Wiki</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Hackzine Wiki" href="../index.html" />
+    <link rel="up" title="Sysadmin" href="index.html" />
+    <link rel="next" title="Debian: apt preferences" href="debian-apt-preferences.html" />
+    <link rel="prev" title="Sysadmin" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="debian-apt-preferences.html" title="Debian: apt preferences"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Sysadmin"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+
+  <div class="section" id="centos-install-solr-with-tomcat6">
+<h1>CentOS: Install Solr with Tomcat6<a class="headerlink" href="#centos-install-solr-with-tomcat6" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Although this method seems to &#8220;just work&#8221;, it is not to be considered
+&#8220;the right way&#8221; to install Solr or be used as-is in production deployments.</p>
+<p class="last">Anyways, it should probably work just fine for development environments.</p>
+</div>
+<div class="section" id="multiple-solr-versions">
+<h2>Multiple Solr versions<a class="headerlink" href="#multiple-solr-versions" title="Permalink to this headline">¶</a></h2>
+<p>In my case, I needed to install two Solr versions (1.4 and 4.6) on the same machine,
+each one with multiple cores.</p>
+<p>To accomplish that, I separated all the configuration / data directories
+by prefixing them wiht the version number.</p>
+</div>
+<div class="section" id="downloading-tarballs">
+<h2>Downloading tarballs<a class="headerlink" href="#downloading-tarballs" title="Permalink to this headline">¶</a></h2>
+<p>For example</p>
+<ul class="simple">
+<li><a class="reference external" href="http://archive.apache.org/dist/lucene/solr/1.4.1/apache-solr-1.4.1.tgz">http://archive.apache.org/dist/lucene/solr/1.4.1/apache-solr-1.4.1.tgz</a></li>
+<li><a class="reference external" href="http://mirror.nohup.it/apache/lucene/solr/4.6.1/solr-4.6.1.tgz">http://mirror.nohup.it/apache/lucene/solr/4.6.1/solr-4.6.1.tgz</a></li>
+</ul>
+<p>(use mirrors close to you!)</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">mkdir -p /opt/solr</span>
+<span class="go">cd /opt/solr</span>
+
+<span class="go">wget http://archive.apache.org/dist/lucene/solr/1.4.1/apache-solr-1.4.1.tgz</span>
+<span class="go">tar xzvf apache-solr-1.4.1.tgz</span>
+<span class="go">ln -s apache-solr-1.4.1 1.4</span>
+
+<span class="go">wget http://mirror.nohup.it/apache/lucene/solr/4.6.1/solr-4.6.1.tgz</span>
+<span class="go">tar xzvf solr-4.6.1.tgz</span>
+<span class="go">ln -s solr-4.6.1 4.6</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-solr-configuration">
+<h2>Create Solr configuration<a class="headerlink" href="#create-solr-configuration" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span class="nv">VERSIONS</span><span class="o">=</span><span class="s2">&quot;1.4 4.6&quot;</span>
+
+mkdir -f /etc/solr
+<span class="k">for </span>version in <span class="nv">$VERSIONS</span>; <span class="k">do</span>
+    <span class="c"># Prepare directories to hold configuration and data</span>
+    mkdir -fp /usr/share/solr/<span class="k">${</span><span class="nv">version</span><span class="k">}</span>
+    mkdir -fp /var/lib/solr/<span class="k">${</span><span class="nv">version</span><span class="k">}</span>/data
+
+    <span class="c"># This directory should hold the data (although, apparently,</span>
+    <span class="c"># data gets actually stored in /usr/share/solr/..../data)</span>
+    chown -R tomcat:tomcat /var/lib/solr/<span class="k">${</span><span class="nv">version</span><span class="k">}</span>/
+
+    <span class="c"># Apparently there are things looking for configuration</span>
+    <span class="c"># in /etc/ too -- better symlink!</span>
+    ln -s /usr/share/solr/<span class="k">${</span><span class="nv">version</span><span class="k">}</span> /etc/solr/<span class="k">${</span><span class="nv">version</span><span class="k">}</span>
+
+    <span class="c"># Let&#39;s copy example configuration for multicore solr</span>
+    cp -r /opt/solr/<span class="k">${</span><span class="nv">version</span><span class="k">}</span>/example/multicore/* /usr/share/solr/<span class="k">${</span><span class="nv">version</span><span class="k">}</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="install-solr-applications-in-tomcat">
+<h2>Install Solr applications in Tomcat<a class="headerlink" href="#install-solr-applications-in-tomcat" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">ln -s /opt/solr/1.4/dist/apache-solr-1.4.1.war /usr/share/tomcat6/webapps/solr-1.4.war</span>
+<span class="go">ln -s /opt/solr/4.6/dist/solr-4.6.1.war /usr/share/tomcat6/webapps/solr-4.6.war</span>
+</pre></div>
+</div>
+<p>And create appropriate configuration files:</p>
+<p><tt class="docutils literal"><span class="pre">/usr/share/tomcat6/conf/Catalina/localhost/solr-1.4.xml</span></tt>:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;Context</span> <span class="na">docBase=</span><span class="s">&quot;/usr/share/tomcat6/webapps/solr-1.4.war&quot;</span> <span class="na">debug=</span><span class="s">&quot;0&quot;</span> <span class="na">privileged=</span><span class="s">&quot;true&quot;</span> <span class="na">allowLinking=</span><span class="s">&quot;true&quot;</span> <span class="na">crossContext=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Environment</span> <span class="na">name=</span><span class="s">&quot;solr/home&quot;</span> <span class="na">type=</span><span class="s">&quot;java.lang.String&quot;</span> <span class="na">value=</span><span class="s">&quot;/usr/share/solr/1.4&quot;</span> <span class="na">override=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Context&gt;</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">/usr/share/tomcat6/conf/Catalina/localhost/solr-4.6.xml</span></tt>:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;Context</span> <span class="na">docBase=</span><span class="s">&quot;/usr/share/tomcat6/webapps/solr-4.6.war&quot;</span> <span class="na">debug=</span><span class="s">&quot;0&quot;</span> <span class="na">privileged=</span><span class="s">&quot;true&quot;</span> <span class="na">allowLinking=</span><span class="s">&quot;true&quot;</span> <span class="na">crossContext=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;Environment</span> <span class="na">name=</span><span class="s">&quot;solr/home&quot;</span> <span class="na">type=</span><span class="s">&quot;java.lang.String&quot;</span> <span class="na">value=</span><span class="s">&quot;/usr/share/solr/4.6&quot;</span> <span class="na">override=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Context&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-installation">
+<h2>Testing installation<a class="headerlink" href="#testing-installation" title="Permalink to this headline">¶</a></h2>
+<p>Restart tomcat:</p>
+<div class="highlight-python"><div class="highlight"><pre>service tomcat6 restart
+</pre></div>
+</div>
+<p>Check whether applications are there and do not display errors:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://localhost:8080/solr-1.4/">http://localhost:8080/solr-1.4/</a></li>
+<li><a class="reference external" href="http://localhost:8080/solr-4.6/">http://localhost:8080/solr-4.6/</a></li>
+</ul>
+</div>
+</div>
+
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
+        var disqus_identifier = "sysadmin/centos-install-solr-tomcat";
+	var disqus_title = "Hackzine Wiki";
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">CentOS: Install Solr with Tomcat6</a><ul>
+<li><a class="reference internal" href="#multiple-solr-versions">Multiple Solr versions</a></li>
+<li><a class="reference internal" href="#downloading-tarballs">Downloading tarballs</a></li>
+<li><a class="reference internal" href="#create-solr-configuration">Create Solr configuration</a></li>
+<li><a class="reference internal" href="#install-solr-applications-in-tomcat">Install Solr applications in Tomcat</a></li>
+<li><a class="reference internal" href="#testing-installation">Testing installation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Sysadmin</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="debian-apt-preferences.html"
+                        title="next chapter">Debian: apt preferences</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/sysadmin/centos-install-solr-tomcat.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="debian-apt-preferences.html" title="Debian: apt preferences"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Sysadmin"
+             >previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012-2014, Samuele ~redShadow~ Santi.
+      Last updated on 2014-02-13 16:59:19 +0100.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>
