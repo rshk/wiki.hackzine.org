@@ -134,8 +134,8 @@ html_theme_options = {
 
     'bgcolor': color_base3,
     'textcolor': color_base03,
-    'linkcolor': color_base02,
-    'visitedlinkcolor': color_base02,
+    'linkcolor': color_blue,
+    'visitedlinkcolor': color_blue,
 
     'headbgcolor': color_base2,
     'headtextcolor': color_base03,
