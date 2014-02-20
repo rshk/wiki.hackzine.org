@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Debian: apt preferences &mdash; Hackzine Wiki</title>
+    <title>PostgreSQL: Change default schema &mdash; Hackzine Wiki</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Hackzine Wiki" href="../index.html" />
     <link rel="up" title="Sysadmin" href="index.html" />
-    <link rel="next" title="Debian: archive repositories" href="debian-archive-repos.html" />
-    <link rel="prev" title="CentOS: Install Solr with Tomcat6" href="centos-install-solr-tomcat.html" /> 
+    <link rel="next" title="PostgreSQL: Make root log in as postgres user" href="postgresql-make-root-login-as-postgres.html" />
+    <link rel="prev" title="Postfix: send-only configuration" href="postfix-send-only.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +36,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="debian-archive-repos.html" title="Debian: archive repositories"
+          <a href="postgresql-make-root-login-as-postgres.html" title="PostgreSQL: Make root log in as postgres user"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="centos-install-solr-tomcat.html" title="CentOS: Install Solr with Tomcat6"
+          <a href="postfix-send-only.html" title="Postfix: send-only configuration"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
@@ -52,24 +52,23 @@
           <div class="body">
             
 
-  <div class="section" id="debian-apt-preferences">
-<h1>Debian: apt preferences<a class="headerlink" href="#debian-apt-preferences" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="install-some-packages-from-testing">
-<h2>Install some packages from testing<a class="headerlink" href="#install-some-packages-from-testing" title="Permalink to this headline">¶</a></h2>
-<p>From: <a class="reference external" href="http://stackoverflow.com/questions/512906">http://stackoverflow.com/questions/512906</a></p>
-<p>Add the following to <tt class="docutils literal"><span class="pre">/etc/apt/preferences</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre>Package: *
-Pin: release a=testing
-Pin-Priority: 200
+  <div class="section" id="postgresql-change-default-schema">
+<h1>PostgreSQL: Change default schema<a class="headerlink" href="#postgresql-change-default-schema" title="Permalink to this headline">¶</a></h1>
+<p>Refer to <a class="reference external" href="http://www.postgresql.org/docs/9.1/static/ddl-schemas.html">official documentation</a> too.</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="c1">-- Use this to show the current search_path</span>
+<span class="c1">-- Should return: &quot;$user&quot;,public</span>
+<span class="k">SHOW</span> <span class="n">search_path</span><span class="p">;</span>
+
+<span class="c1">-- Create another schema</span>
+<span class="k">CREATE</span> <span class="k">SCHEMA</span> <span class="n">my_schema</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">ON</span> <span class="k">SCHEMA</span> <span class="n">my_schema</span> <span class="k">TO</span> <span class="n">my_user</span><span class="p">;</span>
+
+<span class="c1">-- To change search_path on a connection-level</span>
+<span class="k">SET</span> <span class="n">search_path</span> <span class="k">TO</span> <span class="n">my_schema</span><span class="p">;</span>
+
+<span class="c1">-- To change search_path on a database-level</span>
+<span class="k">ALTER</span> <span class="k">database</span> <span class="ss">&quot;my_database&quot;</span> <span class="k">SET</span> <span class="n">search_path</span> <span class="k">TO</span> <span class="n">my_schema</span><span class="p">;</span>
 </pre></div>
-</div>
-<p><tt class="docutils literal"><span class="pre">200</span></tt> means that new packages in testing still override local packages that
-are not in stable (local is always <tt class="docutils literal"><span class="pre">100</span></tt>), but not ones that are in the stable
-repo as well.</p>
-<p>To install packages from testing:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ apt-get install -t testing &lt;some_package&gt;
-</pre></div>
-</div>
 </div>
 </div>
 
@@ -78,7 +77,7 @@ repo as well.</p>
     <script type="text/javascript">
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
-        var disqus_identifier = "sysadmin/debian-apt-preferences";
+        var disqus_identifier = "sysadmin/postgresql-change-default-schema";
 	var disqus_title = "Hackzine Wiki";
 
         /* * * DON'T EDIT BELOW THIS LINE * * */
@@ -96,23 +95,15 @@ repo as well.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Debian: apt preferences</a><ul>
-<li><a class="reference internal" href="#install-some-packages-from-testing">Install some packages from testing</a></li>
-</ul>
-</li>
-</ul>
-
   <h4>Previous topic</h4>
-  <p class="topless"><a href="centos-install-solr-tomcat.html"
-                        title="previous chapter">CentOS: Install Solr with Tomcat6</a></p>
+  <p class="topless"><a href="postfix-send-only.html"
+                        title="previous chapter">Postfix: send-only configuration</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="debian-archive-repos.html"
-                        title="next chapter">Debian: archive repositories</a></p>
+  <p class="topless"><a href="postgresql-make-root-login-as-postgres.html"
+                        title="next chapter">PostgreSQL: Make root log in as postgres user</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/sysadmin/debian-apt-preferences.txt"
+    <li><a href="../_sources/sysadmin/postgresql-change-default-schema.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -139,10 +130,10 @@ repo as well.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="debian-archive-repos.html" title="Debian: archive repositories"
+          <a href="postgresql-make-root-login-as-postgres.html" title="PostgreSQL: Make root log in as postgres user"
              >next</a> |</li>
         <li class="right" >
-          <a href="centos-install-solr-tomcat.html" title="CentOS: Install Solr with Tomcat6"
+          <a href="postfix-send-only.html" title="Postfix: send-only configuration"
              >previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
