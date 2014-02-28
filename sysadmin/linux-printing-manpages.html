@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Debian: archive repositories &mdash; Hackzine Wiki</title>
+    <title>Linux: printing manpages &mdash; Hackzine Wiki</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Hackzine Wiki" href="../index.html" />
     <link rel="up" title="Sysadmin" href="index.html" />
-    <link rel="next" title="Debian: VM cleanup after cloning" href="debian-clean-vm-after-clone.html" />
-    <link rel="prev" title="Debian: apt preferences" href="debian-apt-preferences.html" /> 
+    <link rel="next" title="Linux: Basic LUKS usage" href="linux-using-luks.html" />
+    <link rel="prev" title="Linux: dump NVIDIA card settings" href="linux-nvidia-dump-settings.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +36,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="debian-clean-vm-after-clone.html" title="Debian: VM cleanup after cloning"
+          <a href="linux-using-luks.html" title="Linux: Basic LUKS usage"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="debian-apt-preferences.html" title="Debian: apt preferences"
+          <a href="linux-nvidia-dump-settings.html" title="Linux: dump NVIDIA card settings"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
@@ -52,19 +52,17 @@
           <div class="body">
             
 
-  <div class="section" id="debian-archive-repositories">
-<h1>Debian: archive repositories<a class="headerlink" href="#debian-archive-repositories" title="Permalink to this headline">¶</a></h1>
-<p>All the repositories for old Debian versions can be found in the
-<tt class="docutils literal"><span class="pre">archives.debian.org</span></tt> repository:</p>
-<div class="highlight-python"><div class="highlight"><pre>deb http://archive.debian.org/debian/ lenny main non-free contrib
-deb http://archive.debian.org/debian-security/ lenny/updates main non-free contrib
-deb http://archive.debian.org/debian-volatile/ lenny/volatile main non-free contrib
-
-deb-src http://archive.debian.org/debian/ lenny main non-free contrib
-deb-src http://archive.debian.org/debian-security/ lenny/updates main non-free contrib
-deb-src http://archive.debian.org/debian-volatile/ lenny/volatile main non-free contrib
+  <div class="section" id="linux-printing-manpages">
+<h1>Linux: printing manpages<a class="headerlink" href="#linux-printing-manpages" title="Permalink to this headline">¶</a></h1>
+<p>Format with groff as postscript, send to printer:</p>
+<div class="highlight-shell"><div class="highlight"><pre>zcat /usr/share/man/man1/ls.1.gz | groff -man -Tps | lpr -P hp1_floor2
 </pre></div>
 </div>
+<p>or, of course, save it for later:</p>
+<div class="highlight-shell"><div class="highlight"><pre>zcat /usr/share/man/man1/ls.1.gz | groff -man -Tps &gt; top.ps
+</pre></div>
+</div>
+<p>Source: <a class="reference external" href="http://www.cyberciti.biz/tips/how-do-i-print-out-a-linux-man-or-info-page.html">http://www.cyberciti.biz/tips/how-do-i-print-out-a-linux-man-or-info-page.html</a></p>
 </div>
 
 
@@ -72,7 +70,7 @@ deb-src http://archive.debian.org/debian-volatile/ lenny/volatile main non-free 
     <script type="text/javascript">
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
-        var disqus_identifier = "sysadmin/debian-archive-repos";
+        var disqus_identifier = "sysadmin/linux-printing-manpages";
 	var disqus_title = "Hackzine Wiki";
 
         /* * * DON'T EDIT BELOW THIS LINE * * */
@@ -91,14 +89,14 @@ deb-src http://archive.debian.org/debian-volatile/ lenny/volatile main non-free 
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="debian-apt-preferences.html"
-                        title="previous chapter">Debian: apt preferences</a></p>
+  <p class="topless"><a href="linux-nvidia-dump-settings.html"
+                        title="previous chapter">Linux: dump NVIDIA card settings</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="debian-clean-vm-after-clone.html"
-                        title="next chapter">Debian: VM cleanup after cloning</a></p>
+  <p class="topless"><a href="linux-using-luks.html"
+                        title="next chapter">Linux: Basic LUKS usage</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/sysadmin/debian-archive-repos.txt"
+    <li><a href="../_sources/sysadmin/linux-printing-manpages.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -125,10 +123,10 @@ deb-src http://archive.debian.org/debian-volatile/ lenny/volatile main non-free 
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="debian-clean-vm-after-clone.html" title="Debian: VM cleanup after cloning"
+          <a href="linux-using-luks.html" title="Linux: Basic LUKS usage"
              >next</a> |</li>
         <li class="right" >
-          <a href="debian-apt-preferences.html" title="Debian: apt preferences"
+          <a href="linux-nvidia-dump-settings.html" title="Linux: dump NVIDIA card settings"
              >previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
@@ -136,7 +134,7 @@ deb-src http://archive.debian.org/debian-volatile/ lenny/volatile main non-free 
     </div>
     <div class="footer">
         &copy; Copyright 2012-2014, Samuele ~redShadow~ Santi.
-      Last updated on 2014-03-01 00:28:30 +0100.
+      Last updated on 2014-03-01 00:32:31 +0100.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
