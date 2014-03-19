@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PostgreSQL: Make root log in as postgres user &mdash; Hackzine Wiki</title>
+    <title>Using Git via SSH and a non-standard user &mdash; Hackzine Wiki</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Hackzine Wiki" href="../index.html" />
     <link rel="up" title="Sysadmin" href="index.html" />
-    <link rel="next" title="Hardware" href="../hardware/index.html" />
-    <link rel="prev" title="PostgreSQL: Change default schema" href="postgresql-change-default-schema.html" /> 
+    <link rel="next" title="GitLab: misc" href="gitlab-misc.html" />
+    <link rel="prev" title="Debian: registering an apt repository key" href="debian-register-apt-repo-key.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +36,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../hardware/index.html" title="Hardware"
+          <a href="gitlab-misc.html" title="GitLab: misc"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="postgresql-change-default-schema.html" title="PostgreSQL: Change default schema"
+          <a href="debian-register-apt-repo-key.html" title="Debian: registering an apt repository key"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
@@ -52,32 +52,26 @@
           <div class="body">
             
 
-  <div class="section" id="postgresql-make-root-log-in-as-postgres-user">
-<h1>PostgreSQL: Make root log in as postgres user<a class="headerlink" href="#postgresql-make-root-log-in-as-postgres-user" title="Permalink to this headline">¶</a></h1>
-<p><strong>Tested on PostgreSQL 8.3</strong></p>
-<p>I am writing some backup scripts for a server, and I needed a way to let the
-root user on the machine to login to PostgreSQL as &#8216;postgres&#8217; user to perform
-some administrative operations.</p>
-<p>To do so, I had to make a few changes to the configuration file, to let the
-root user to authenticate via local-socket without providing a password
-(the script is launched automatically by cron, no user interaction needed).</p>
-<p>In <tt class="docutils literal"><span class="pre">/etc/postgresql/8.3/main/pg_hba.conf</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre># TYPE  DATABASE    USER        CIDR-ADDRESS    METHOD
-local           all             postgres                                        ident rootaspg
-local           all             all                                             ident sameuser
-host            all             all             127.0.0.1/32            md5
-host            all             all             ::1/128                 md5
+  <div class="section" id="using-git-via-ssh-and-a-non-standard-user">
+<h1>Using Git via SSH and a non-standard user<a class="headerlink" href="#using-git-via-ssh-and-a-non-standard-user" title="Permalink to this headline">¶</a></h1>
+<p><strong>Use case:</strong> You currenty use GitHub or another git service via ssh, and have
+a defualt user configured in your <tt class="docutils literal"><span class="pre">~/.gitconfig</span></tt> and uses your <tt class="docutils literal"><span class="pre">~/.ssh/id_rsa</span></tt> key
+for connecting. So far so good.</p>
+<p>Now, you want to use a separate user for certain repositories, for some reason.
+Here it is an explanation on how to do this.</p>
+<p>First, add something like this to <tt class="docutils literal"><span class="pre">~/.ssh/config</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>Host github-otheruser
+    IdentityFile ~/.ssh/id_rsa-otheruser
+    User git
+    HostName github.com
+    Port 22
 </pre></div>
 </div>
-<p>In <tt class="docutils literal"><span class="pre">/etc/postgresql/8.3/main/pg_ident.conf</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre># MAPNAME     IDENT-USERNAME    PG-USERNAME
-rootaspg                root                            postgres
-rootaspg                root                            drupal
-rootaspg                postgres                        postgres
+<p>The, just clone the repository and configure user in one command:</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone github-otheruser:otheruser/myrepo \
+     --config=user.name=&#39;Other User&#39; --config=user.email=otheruser@example.com
 </pre></div>
 </div>
-<p>This allows root to authenticate on postgresql via unix-socket as the user
-&#8216;postgres&#8217; or &#8216;drupal&#8217;, without asking for password.</p>
 </div>
 
 
@@ -85,7 +79,7 @@ rootaspg                postgres                        postgres
     <script type="text/javascript">
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
-        var disqus_identifier = "sysadmin/postgresql-make-root-login-as-postgres";
+        var disqus_identifier = "sysadmin/git-ssh-nondefault-user";
 	var disqus_title = "Hackzine Wiki";
 
         /* * * DON'T EDIT BELOW THIS LINE * * */
@@ -104,14 +98,14 @@ rootaspg                postgres                        postgres
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="postgresql-change-default-schema.html"
-                        title="previous chapter">PostgreSQL: Change default schema</a></p>
+  <p class="topless"><a href="debian-register-apt-repo-key.html"
+                        title="previous chapter">Debian: registering an apt repository key</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../hardware/index.html"
-                        title="next chapter">Hardware</a></p>
+  <p class="topless"><a href="gitlab-misc.html"
+                        title="next chapter">GitLab: misc</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/sysadmin/postgresql-make-root-login-as-postgres.txt"
+    <li><a href="../_sources/sysadmin/git-ssh-nondefault-user.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -138,10 +132,10 @@ rootaspg                postgres                        postgres
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../hardware/index.html" title="Hardware"
+          <a href="gitlab-misc.html" title="GitLab: misc"
              >next</a> |</li>
         <li class="right" >
-          <a href="postgresql-change-default-schema.html" title="PostgreSQL: Change default schema"
+          <a href="debian-register-apt-repo-key.html" title="Debian: registering an apt repository key"
              >previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
