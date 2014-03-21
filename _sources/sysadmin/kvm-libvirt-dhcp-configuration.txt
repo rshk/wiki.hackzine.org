@@ -68,17 +68,14 @@ network configuration is stored:
 
 **Workaround:**
 
-Just symlink the files to the correct place::
+Just symlink the folders::
 
-    cd /var/lib/libvirt/network/
-    mkdir old
-    mv -t old *.xml
-    ln -s /etc/libvirt/qemu/networks/network/*.xml .
+    rm -rf /etc/libvirt/qemu/networks
+    ln -s /var/lib/libvirt/network /etc/libvirt/qemu/networks
 
 Now everything should work fine.
 
 .. warning::
 
-    You cannot create symlinks the other way round, as configuration
-    files in ``/etc/libvirt/qemu/networks/`` seems to get deleted + recreated, 
-    so you lose symlinks each time!
+   You cannot symlink just the files, as they get both overwritten
+   each time configuration is saved by ``net-edit``..

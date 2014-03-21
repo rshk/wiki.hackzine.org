@@ -112,19 +112,16 @@ This is the actual configuration file used by libvirt to configure dnsmasq</li>
 This is the file in which net-edit writes configuration</li>
 </ul>
 <p><strong>Workaround:</strong></p>
-<p>Just symlink the files to the correct place:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd /var/lib/libvirt/network/
-mkdir old
-mv -t old *.xml
-ln -s /etc/libvirt/qemu/networks/network/*.xml .
+<p>Just symlink the folders:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">libvirt</span><span class="o">/</span><span class="n">qemu</span><span class="o">/</span><span class="n">networks</span>
+<span class="n">ln</span> <span class="o">-</span><span class="n">s</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">libvirt</span><span class="o">/</span><span class="n">network</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">libvirt</span><span class="o">/</span><span class="n">qemu</span><span class="o">/</span><span class="n">networks</span>
 </pre></div>
 </div>
 <p>Now everything should work fine.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">You cannot create symlinks the other way round, as configuration
-files in <tt class="docutils literal"><span class="pre">/etc/libvirt/qemu/networks/</span></tt> seems to get deleted + recreated,
-so you lose symlinks each time!</p>
+<p class="last">You cannot symlink just the files, as they get both overwritten
+each time configuration is saved by <tt class="docutils literal"><span class="pre">net-edit</span></tt>..</p>
 </div>
 </div>
 </div>
@@ -206,7 +203,7 @@ so you lose symlinks each time!</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012-2014, Samuele ~redShadow~ Santi.
-      Last updated on 2014-03-21 12:23:08 +0100.
+      Last updated on 2014-03-21 12:33:58 +0100.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
     </div>
   </body>
