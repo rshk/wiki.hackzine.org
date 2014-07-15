@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Linux: Common configuration files &mdash; Hackzine Wiki</title>
+    <title>Bind: dnssec update &mdash; Hackzine Wiki</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="top" title="Hackzine Wiki" href="../index.html" />
     <link rel="up" title="Sysadmin" href="index.html" />
-    <link rel="next" title="Linux: getting e-mail notification on user login" href="linux-login-email-notification.html" />
-    <link rel="prev" title="Linux: Specifying handler for file execution" href="linux-binary-handler.html" /> 
+    <link rel="next" title="CentOS: Install Solr with Tomcat6" href="centos-install-solr-tomcat.html" />
+    <link rel="prev" title="Sysadmin" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,10 +36,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="linux-login-email-notification.html" title="Linux: getting e-mail notification on user login"
+          <a href="centos-install-solr-tomcat.html" title="CentOS: Install Solr with Tomcat6"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="linux-binary-handler.html" title="Linux: Specifying handler for file execution"
+          <a href="index.html" title="Sysadmin"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
@@ -52,38 +52,76 @@
           <div class="body">
             
 
-  <div class="section" id="linux-common-configuration-files">
-<h1>Linux: Common configuration files<a class="headerlink" href="#linux-common-configuration-files" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="bind-dnssec-update">
+<h1>Bind: dnssec update<a class="headerlink" href="#bind-dnssec-update" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Code snippets in this page have now been aggregated and can be found
-here: <a class="reference external" href="https://github.com/rshk/CommonScripts">https://github.com/rshk/CommonScripts</a></p>
+<p class="last">This is just a quick reference guide, have a look at more
+complete guides if you don&#8217;t know much about this..</p>
 </div>
-<div class="section" id="cool-colored-prompt">
-<h2>Cool colored prompt<a class="headerlink" href="#cool-colored-prompt" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">PS1</span><span class="o">=</span><span class="s1">&#39;\[\e[1;31m\]${debian_chroot:+($debian_chroot)}\[\e[1;36m\]\u\[\e[1;34m\]@\h\[\e[0m\] : \[\e[1;32m\]\w\n\[\e[1;31m\]\$\[\e[0m\] &#39;</span>
-<span class="nv">PS1</span><span class="o">=</span><span class="s1">&#39;\[\e[1;31m\]${debian_chroot:+($debian_chroot)}\[\e[1;42;33m\] \u\[\e[1;44;36m\]@\h \[\e[0m\] \[\e[1;32m\]\w\n\[\e[1;31m\]\$\[\e[0m\] &#39;</span>
+<p>Let&#8217;s assume we want to allow updating entries in the <tt class="docutils literal"><span class="pre">mydomain.tld</span></tt> zone.</p>
+<p>The procedure has been successfully used on Debian 6 &#8220;squeeze&#8221;.</p>
+<div class="section" id="generate-keys">
+<h2>Generate keys<a class="headerlink" href="#generate-keys" title="Permalink to this headline">¶</a></h2>
+<p>Generate keypair for authenticating the DNSSEC update:</p>
+<div class="highlight-python"><div class="highlight"><pre>dnssec-keygen -a HMAC-SHA512 -b 512 -n USER admin.mydomain.tld
 </pre></div>
 </div>
 </div>
-<div class="section" id="prompt-additions">
-<h2>Prompt additions<a class="headerlink" href="#prompt-additions" title="Permalink to this headline">¶</a></h2>
-<p>To show information on the current chroot / add prefix if working via ssh:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">PS1</span><span class="o">=</span><span class="s2">&quot;${debian_chroot:+\[\e[41m\] (${debian_chroot}) \[\e[0m\]}${PS1}&quot;</span>
-<span class="nv">PS1</span><span class="o">=</span><span class="s2">&quot;${SCHROOT_SESSION_ID:+\[\e[41m\](${SCHROOT_SESSION_ID}) \[\e[0m\]}${PS1}&quot;</span>
-<span class="nv">PS1</span><span class="o">=</span><span class="s2">&quot;${SSH_CONNECTION:+\[\e[44m\] (ssh) \[\e[0m\]}${PS1}&quot;</span>
+<div class="section" id="configure-bind">
+<h2>Configure Bind<a class="headerlink" href="#configure-bind" title="Permalink to this headline">¶</a></h2>
+<p>File <tt class="docutils literal"><span class="pre">/etc/bind/keys.conf</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>key admin.mydomain.tld. {
+    algorithm HMAC-SHA512;
+    secret &quot;PEMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx yyyyyyyyyyyyyyyyyyyyyyyyyyyyyy==&quot;;
+};
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Here it is my even-nicer brand-new bash prompt!
-<a class="reference external" href="https://github.com/rshk/CommonScripts/blob/master/Configs/bash/bash_prompt">https://github.com/rshk/CommonScripts/blob/master/Configs/bash/bash_prompt</a></p>
+<p>File <tt class="docutils literal"><span class="pre">/etc/bind/named.conf.local</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>include &quot;/etc/bind/keys.conf&quot;;
+
+zone &quot;mydomain.tld&quot; {
+    type master;
+    file &quot;/etc/bind/db.mydomain.tld&quot;;
+    allow-update {
+        key admin.mydomain.tld.;
+    };
+};
+</pre></div>
 </div>
 </div>
-<div class="section" id="useful-aliases">
-<h2>Useful aliases<a class="headerlink" href="#useful-aliases" title="Permalink to this headline">¶</a></h2>
-<p>Have a look at the up-to-date aliases file here:
-<a class="reference external" href="https://github.com/rshk/CommonScripts/blob/master/Configs/bash/bash_aliases">https://github.com/rshk/CommonScripts/blob/master/Configs/bash/bash_aliases</a></p>
+<div class="section" id="issue-dnssec-updates">
+<h2>Issue DNSSEC updates<a class="headerlink" href="#issue-dnssec-updates" title="Permalink to this headline">¶</a></h2>
+<p>File <tt class="docutils literal"><span class="pre">/tmp/dnssec-update.txt</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>server localhost
+zone r3dbool.local
+update delete test-dnssec.mydomain.tld A
+update add test-dnssec.mydomain.tld 3600 A 10.11.12.13
+show
+send
+</pre></div>
+</div>
+<p>Issue the update:</p>
+<div class="highlight-python"><div class="highlight"><pre>nsupdate -k Kadmin.mydomain.tld.+157+46947.private -v /tmp/dnssec-update.txt
+</pre></div>
+</div>
+<p>Check:</p>
+<div class="highlight-python"><div class="highlight"><pre># host test-dnssec.mydomain.tld 127.0.0.1
+Using domain server:
+Name: 127.0.0.1
+Address: 127.0.0.1#53
+Aliases:
+
+test-dnssec.mydomain.tld has address 10.11.12.13
+</pre></div>
+</div>
+</div>
+<div class="section" id="credits">
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://linux.yyz.us/nsupdate/">http://linux.yyz.us/nsupdate/</a></li>
+<li><a class="reference external" href="http://linux.yyz.us/dns/ddns-server.html">http://linux.yyz.us/dns/ddns-server.html</a></li>
+</ul>
 </div>
 </div>
 
@@ -92,7 +130,7 @@ here: <a class="reference external" href="https://github.com/rshk/CommonScripts"
     <script type="text/javascript">
         /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
         var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
-        var disqus_identifier = "sysadmin/linux-common-configuration-files";
+        var disqus_identifier = "sysadmin/bind-dnssec-update";
 	var disqus_title = "Hackzine Wiki";
 
         /* * * DON'T EDIT BELOW THIS LINE * * */
@@ -112,23 +150,24 @@ here: <a class="reference external" href="https://github.com/rshk/CommonScripts"
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Linux: Common configuration files</a><ul>
-<li><a class="reference internal" href="#cool-colored-prompt">Cool colored prompt</a></li>
-<li><a class="reference internal" href="#prompt-additions">Prompt additions</a></li>
-<li><a class="reference internal" href="#useful-aliases">Useful aliases</a></li>
+<li><a class="reference internal" href="#">Bind: dnssec update</a><ul>
+<li><a class="reference internal" href="#generate-keys">Generate keys</a></li>
+<li><a class="reference internal" href="#configure-bind">Configure Bind</a></li>
+<li><a class="reference internal" href="#issue-dnssec-updates">Issue DNSSEC updates</a></li>
+<li><a class="reference internal" href="#credits">Credits</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="linux-binary-handler.html"
-                        title="previous chapter">Linux: Specifying handler for file execution</a></p>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Sysadmin</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="linux-login-email-notification.html"
-                        title="next chapter">Linux: getting e-mail notification on user login</a></p>
+  <p class="topless"><a href="centos-install-solr-tomcat.html"
+                        title="next chapter">CentOS: Install Solr with Tomcat6</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/sysadmin/linux-common-configuration-files.txt"
+    <li><a href="../_sources/sysadmin/bind-dnssec-update.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -155,10 +194,10 @@ here: <a class="reference external" href="https://github.com/rshk/CommonScripts"
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="linux-login-email-notification.html" title="Linux: getting e-mail notification on user login"
+          <a href="centos-install-solr-tomcat.html" title="CentOS: Install Solr with Tomcat6"
              >next</a> |</li>
         <li class="right" >
-          <a href="linux-binary-handler.html" title="Linux: Specifying handler for file execution"
+          <a href="index.html" title="Sysadmin"
              >previous</a> |</li>
         <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
           <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
@@ -166,7 +205,7 @@ here: <a class="reference external" href="https://github.com/rshk/CommonScripts"
     </div>
     <div class="footer">
         &copy; Copyright 2012-2014, Samuele ~redShadow~ Santi.
-      Last updated on 2014-07-15 20:08:37 +0200.
+      Last updated on 2014-07-15 20:20:46 +0200.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
