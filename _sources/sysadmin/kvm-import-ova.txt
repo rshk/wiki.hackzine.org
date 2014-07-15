@@ -8,7 +8,7 @@ configuration and disk.
 
 So, you can simply extract the files::
 
-    $ tar tvf MyAppliance.ova
+    $ tar xvf MyAppliance.ova
 
 And convert to a format appropriate for qemu/kvm::
 
