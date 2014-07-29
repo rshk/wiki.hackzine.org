@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Hyper-V: Create VM from PowerShell &mdash; Hackzine Wiki</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Hackzine Wiki" href="../index.html" />
+    <link rel="up" title="Sysadmin" href="index.html" />
+    <link rel="next" title="KVM: Convert disk images" href="kvm-convert-images.html" />
+    <link rel="prev" title="GitLab: misc" href="gitlab-misc.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="kvm-convert-images.html" title="KVM: Convert disk images"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gitlab-misc.html" title="GitLab: misc"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Sysadmin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+
+  <div class="section" id="hyper-v-create-vm-from-powershell">
+<h1>Hyper-V: Create VM from PowerShell<a class="headerlink" href="#hyper-v-create-vm-from-powershell" title="Permalink to this headline">¶</a></h1>
+<p>I needed to create a cluster of (identical) VMs on an Hyper-V cluster.</p>
+<p>To speed up things, I created a PowerShell script to automatically
+deploy VMs, cloning a template virtual harddisk.</p>
+<div class="highlight-powershell"><div class="highlight"><pre><span class="c"># ------------------------------------------------------------</span>
+<span class="c"># Create Hyper-V virtual machine via PowerShell</span>
+<span class="c"># ------------------------------------------------------------</span>
+
+<span class="c"># Variables</span>
+<span class="nv">$VM_NAME</span> <span class="p">=</span> <span class="s2">&quot;PS_TEST_VM&quot;</span>
+<span class="nv">$VM_MAC</span> <span class="p">=</span> <span class="s2">&quot;00:15:5d:11:22:01&quot;</span>
+
+<span class="nv">$VM_RAM</span> <span class="p">=</span> <span class="n">256GB</span>
+<span class="nv">$VM_CPUS</span> <span class="p">=</span> <span class="n">16</span>
+<span class="nv">$VM_DEST_PATH</span> <span class="p">=</span> <span class="s2">&quot;C:\ClusterStorage\Volume1\tests&quot;</span>
+<span class="nv">$VM_VLAN</span> <span class="p">=</span> <span class="n">82</span>
+<span class="nv">$VM_HOST</span> <span class="p">=</span> <span class="s2">&quot;HYPERV_NODE_25&quot;</span>
+<span class="nv">$NETWORK_SWITCH</span> <span class="p">=</span> <span class="s2">&quot;DefaultNetwork&quot;</span>
+<span class="nv">$ROOT_VHD_TPL</span> <span class="p">=</span> <span class="s2">&quot;C:\ClusterStorage\Volume1\tests\Template.vhdx&quot;</span>
+<span class="nv">$VM_ROOT_VHD</span> <span class="p">=</span> <span class="s2">&quot;${VM_DEST_PATH}/${VM_NAME}.vhdx&quot;</span>
+<span class="nv">$VM_DATA_VHD</span> <span class="p">=</span> <span class="s2">&quot;${VM_DEST_PATH}/${VM_NAME}-data.vhdx&quot;</span>
+<span class="nv">$VM_DATA_VHD_SIZE</span> <span class="p">=</span> <span class="n">80GB</span>
+<span class="nv">$VM_CLUSTER</span> <span class="p">=</span> <span class="s2">&quot;HV_CLUSTER_05&quot;</span>
+
+<span class="c"># Create destination folder for VMs</span>
+<span class="n">MD</span> <span class="nv">$VM_DEST_PATH</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
+
+<span class="c"># Create Virtual Machine</span>
+<span class="c"># ------------------------------------------------------------</span>
+
+<span class="n">echo</span> <span class="s2">&quot;Creating VM: $VM_NAME on ${VM_HOST}&quot;</span>
+<span class="nv">$VM</span> <span class="p">=</span> <span class="nb">New-VM</span> <span class="n">-Name</span> <span class="nv">$VM_NAME</span> <span class="n">-Path</span> <span class="nv">$VM_DEST_PATH</span> <span class="n">-MemoryStartupBytes</span> <span class="nv">$VM_RAM</span> <span class="n">-ComputerName</span> <span class="nv">$VM_HOST</span>
+<span class="c">#echo &quot;    VM Id: $( $VM.Id )&quot;</span>
+<span class="c">#echo &quot;    VM Name: $( $VM.Name )&quot;</span>
+<span class="c">#echo &quot;    Host: $( $VM.ComputerName )&quot;</span>
+
+<span class="c"># Create &amp; attach VHDs</span>
+<span class="c"># ------------------------------------------------------------</span>
+<span class="c"># Note: it is impossible to boot from SCSI controllers</span>
+
+<span class="n">echo</span> <span class="s2">&quot;Getting first SCSI controller&quot;</span>
+
+<span class="n">echo</span> <span class="s2">&quot;Copying Root VHD to $VM_ROOT_VHD&quot;</span>
+<span class="nb">Convert-VHD</span> <span class="n">-Path</span> <span class="nv">$ROOT_VHD_TPL</span> <span class="n">-DestinationPath</span> <span class="nv">$VM_ROOT_VHD</span>
+<span class="nb">Add-VMHardDiskDrive</span> <span class="n">-VM</span> <span class="nv">$VM</span> <span class="n">-ControllerType</span> <span class="n">IDE</span> <span class="n">-ControllerNumber</span> <span class="n">0</span> <span class="n">-ControllerLocation</span> <span class="n">0</span> <span class="n">-Path</span> <span class="nv">$VM_ROOT_VHD</span>
+
+<span class="n">echo</span> <span class="s2">&quot;Creating new Data disk $VM_DATA_VHD_SIZE in $VM_DATA_VHD&quot;</span>
+<span class="nb">New-VHD</span> <span class="n">-Path</span> <span class="nv">$VM_DATA_VHD</span> <span class="n">-SizeBytes</span> <span class="nv">$VM_DATA_VHD_SIZE</span> <span class="n">-Dynamic</span>
+<span class="nb">Add-VMHardDiskDrive</span> <span class="n">-VM</span> <span class="nv">$VM</span> <span class="n">-ControllerType</span> <span class="n">IDE</span> <span class="n">-ControllerNumber</span> <span class="n">0</span> <span class="n">-ControllerLocation</span> <span class="n">1</span> <span class="n">-Path</span> <span class="nv">$VM_DATA_VHD</span>
+
+<span class="c"># Set CPU / memory</span>
+<span class="c"># ------------------------------------------------------------</span>
+
+<span class="n">echo</span> <span class="s2">&quot;Setting CPU / Memory configuration&quot;</span>
+<span class="nb">Set-VMProcessor</span> <span class="n">-VM</span> <span class="nv">$VM</span> <span class="n">-Count</span> <span class="nv">$VM_CPUS</span>
+<span class="nb">Set-VMMemory</span> <span class="n">-VM</span> <span class="nv">$VM</span> <span class="n">-DynamicMemoryEnabled</span> <span class="nv">$True</span> <span class="n">-MaximumBytes</span> <span class="n">512GB</span> <span class="n">-MinimumBytes</span> <span class="n">16GB</span> <span class="n">-StartupBytes</span> <span class="nv">$VM_RAM</span>
+
+<span class="c"># Configure NIC</span>
+<span class="c"># ------------------------------------------------------------</span>
+
+<span class="n">echo</span> <span class="s2">&quot;Configuring NIC (mac address: ${VM_MAC}, switch: ${NETWORK_SWITCH})&quot;</span>
+<span class="nb">Remove-VMNetworkAdapter</span> <span class="n">-VM</span> <span class="nv">$VM</span>
+<span class="nb">Add-VMNetworkAdapter</span> <span class="n">-VM</span> <span class="nv">$VM</span> <span class="n">-Name</span> <span class="n">PublicNIC</span> <span class="n">-StaticMacAddress</span> <span class="nv">$VM_MAC</span> <span class="n">-SwitchName</span> <span class="nv">$NETWORK_SWITCH</span>
+<span class="nv">$ADAPTER</span> <span class="p">=</span> <span class="nb">Get-VMNetworkAdapter</span> <span class="n">-VM</span> <span class="nv">$VM</span>
+<span class="nb">Set-VMNetworkAdapterVlan</span> <span class="n">-VMNetworkAdapter</span> <span class="nv">$ADAPTER</span> <span class="n">-Access</span> <span class="n">-VlanId</span> <span class="nv">$VM_VLAN</span>
+<span class="c"># Connect-VMNetworkAdapter -VMNetworkAdapter $ADAPTER -SwitchName $NETWORK_SWITCH</span>
+
+<span class="c"># Add VM to cluster</span>
+<span class="c"># ------------------------------------------------------------</span>
+
+<span class="n">echo</span> <span class="s2">&quot;Adding VM to cluster&quot;</span>
+<span class="nb">Add-ClusterVirtualMachineRole</span> <span class="n">-VMName</span> <span class="nv">$VM_NAME</span> <span class="n">-Cluster</span> <span class="nv">$VM_CLUSTER</span>
+
+<span class="c"># Start VM</span>
+<span class="c"># ------------------------------------------------------------</span>
+
+<span class="c">#Start-VM $VM_NAME</span>
+</pre></div>
+</div>
+<div class="section" id="todo-list">
+<h2>Todo-List<a class="headerlink" href="#todo-list" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Add more checks to make the script more robust, in case the default
+VM settings should change</li>
+<li>Make this script accept arguments some way to directly create a
+batch of VMs without having to manually change configuration
+variables</li>
+<li>Figure out some way to perform unattended finalization of VM
+installation<ul>
+<li>Change passwords</li>
+<li>Setup SSH server</li>
+<li>Install + register Saltstack + issue highstate</li>
+<li>(This probably could be done via PXE boot &#8211; but we need a legacy NIC..)</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'hackzinewiki'; // required: replace example with your forum shortname
+        var disqus_identifier = "sysadmin/hyperv-powershell-create-vm";
+	var disqus_title = "Hackzine Wiki";
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Hyper-V: Create VM from PowerShell</a><ul>
+<li><a class="reference internal" href="#todo-list">Todo-List</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="gitlab-misc.html"
+                        title="previous chapter">GitLab: misc</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="kvm-convert-images.html"
+                        title="next chapter">KVM: Convert disk images</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/sysadmin/hyperv-powershell-create-vm.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="kvm-convert-images.html" title="KVM: Convert disk images"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gitlab-misc.html" title="GitLab: misc"
+             >previous</a> |</li>
+        <li><a href="../index.html">Hackzine Wiki</a> &raquo;</li>
+          <li><a href="index.html" >Sysadmin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012-2014, Samuele ~redShadow~ Santi.
+      Last updated on 2014-07-29 17:44:24 +0200.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
