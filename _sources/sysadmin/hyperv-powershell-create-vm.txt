@@ -83,6 +83,9 @@ deploy VMs, cloning a template virtual harddisk.
     #Start-VM $VM_NAME
 
 
+Code is also available in a Gist: https://gist.github.com/rshk/a1fcde3b5c77bff3756b
+
+
 Todo-List
 =========
 
