@@ -54,17 +54,29 @@
 
   <div class="section" id="postgresql-make-root-log-in-as-postgres-user">
 <h1>PostgreSQL: Make root log in as postgres user<a class="headerlink" href="#postgresql-make-root-log-in-as-postgres-user" title="Permalink to this headline">¶</a></h1>
-<p><strong>Tested on PostgreSQL 8.3</strong></p>
-<p>I am writing some backup scripts for a server, and I needed a way to let the
-root user on the machine to login to PostgreSQL as &#8216;postgres&#8217; user to perform
-some administrative operations.</p>
-<p>To do so, I had to make a few changes to the configuration file, to let the
-root user to authenticate via local-socket without providing a password
-(the script is launched automatically by cron, no user interaction needed).</p>
+<p>The goal is allowing root (or another user) to login as a certain
+other user without the need of entering a password.</p>
+<div class="section" id="postgresql-9-3">
+<h2>PostgreSQL 9.3<a class="headerlink" href="#postgresql-9-3" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">pg_hba.conf</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre># TYPE  DATABASE USER   ADDRESS         METHOD
+local   all     all                     peer map=root_as_others
+host    all     all     127.0.0.1/32    ident map=root_as_others
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">pg_ident.conf</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre># MAPNAME       SYSTEM-USERNAME PG-USERNAME
+root_as_others  root            postgres
+root_as_others  root            gis
+</pre></div>
+</div>
+</div>
+<div class="section" id="postgresql-8-3">
+<h2>PostgreSQL 8.3<a class="headerlink" href="#postgresql-8-3" title="Permalink to this headline">¶</a></h2>
 <p>In <tt class="docutils literal"><span class="pre">/etc/postgresql/8.3/main/pg_hba.conf</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre># TYPE  DATABASE    USER        CIDR-ADDRESS    METHOD
-local           all             postgres                                        ident rootaspg
-local           all             all                                             ident sameuser
+<div class="highlight-python"><div class="highlight"><pre># TYPE          DATABASE        USER            CIDR-ADDRESS            METHOD
+local           all             postgres                                ident rootaspg
+local           all             all                                     ident sameuser
 host            all             all             127.0.0.1/32            md5
 host            all             all             ::1/128                 md5
 </pre></div>
@@ -76,8 +88,7 @@ rootaspg                root                            drupal
 rootaspg                postgres                        postgres
 </pre></div>
 </div>
-<p>This allows root to authenticate on postgresql via unix-socket as the user
-&#8216;postgres&#8217; or &#8216;drupal&#8217;, without asking for password.</p>
+</div>
 </div>
 
 
@@ -103,6 +114,15 @@ rootaspg                postgres                        postgres
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PostgreSQL: Make root log in as postgres user</a><ul>
+<li><a class="reference internal" href="#postgresql-9-3">PostgreSQL 9.3</a></li>
+<li><a class="reference internal" href="#postgresql-8-3">PostgreSQL 8.3</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="postgresql-change-default-schema.html"
                         title="previous chapter">PostgreSQL: Change default schema</a></p>
@@ -149,7 +169,7 @@ rootaspg                postgres                        postgres
     </div>
     <div class="footer">
         &copy; Copyright 2012-2014, Samuele ~redShadow~ Santi.
-      Last updated on 2014-07-29 17:30:42 +0200.
+      Last updated on 2014-08-01 15:16:44 +0200.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
