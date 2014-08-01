@@ -1,22 +1,32 @@
 PostgreSQL: Make root log in as postgres user
 #############################################
 
-**Tested on PostgreSQL 8.3**
+The goal is allowing root (or another user) to login as a certain
+other user without the need of entering a password.
 
-I am writing some backup scripts for a server, and I needed a way to let the
-root user on the machine to login to PostgreSQL as 'postgres' user to perform
-some administrative operations.
+PostgreSQL 9.3
+==============
 
-To do so, I had to make a few changes to the configuration file, to let the
-root user to authenticate via local-socket without providing a password
-(the script is launched automatically by cron, no user interaction needed).
+``pg_hba.conf``::
+
+    # TYPE  DATABASE USER   ADDRESS         METHOD
+    local   all     all                     peer map=root_as_others
+    host    all     all     127.0.0.1/32    ident map=root_as_others
+
+``pg_ident.conf``::
+
+    # MAPNAME       SYSTEM-USERNAME PG-USERNAME
+    root_as_others  root            postgres
+    root_as_others  root            gis
+
+PostgreSQL 8.3
+==============
 
 In ``/etc/postgresql/8.3/main/pg_hba.conf``::
 
-
-    # TYPE  DATABASE    USER        CIDR-ADDRESS    METHOD
-    local           all             postgres                                        ident rootaspg
-    local           all             all                                             ident sameuser
+    # TYPE          DATABASE        USER            CIDR-ADDRESS            METHOD
+    local           all             postgres                                ident rootaspg
+    local           all             all                                     ident sameuser
     host            all             all             127.0.0.1/32            md5
     host            all             all             ::1/128                 md5
 
@@ -26,6 +36,3 @@ In ``/etc/postgresql/8.3/main/pg_ident.conf``::
     rootaspg                root                            postgres
     rootaspg                root                            drupal
     rootaspg                postgres                        postgres
-
-This allows root to authenticate on postgresql via unix-socket as the user
-'postgres' or 'drupal', without asking for password.
