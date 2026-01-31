@@ -1,2 +1,2 @@
 sphinx
-pygments-style-solarized
+pygments-solarized-style
